@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   Cpu,
@@ -17,12 +17,15 @@ import {
   Calendar,
   Send,
   CheckCircle2,
+  Monitor,
 } from "lucide-react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Particles } from "@/components/site/Particles";
-import heroImg from "@/assets/hero-tech.jpg";
-import teamImg from "@/assets/about-team.jpg";
+import heroImg from "@/assets/cleanIt.png";
+import heroImg2 from "@/assets/POS.png";
+import teamImg from "@/assets/team-img.png";
+import cleanItLogo from "@/assets/cleanit-logo.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -82,6 +85,17 @@ function Section({
 }
 
 function Hero() {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  useEffect(() => {
+    // Auto flip both image and card at the same time every 4 seconds
+    const interval = setInterval(() => {
+      setIsFlipped((prev) => !prev);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section
       id="home"
@@ -124,55 +138,87 @@ function Hero() {
               Contact Us
             </a>
           </div>
-
-          <div className="mt-12 grid grid-cols-3 gap-4 max-w-md">
-            {[
-              { v: "2025", l: "Founded" },
-              { v: "2+", l: "Solutions" },
-              { v: "24/7", l: "Support" },
-            ].map((s) => (
-              <div key={s.l} className="glass rounded-xl p-4">
-                <div className="text-2xl font-bold text-gradient">{s.v}</div>
-                <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="relative animate-fade-up" style={{ animationDelay: "150ms" }}>
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-cyan-glow/20 blur-3xl rounded-full" />
+
+          {/* 3D Flip Container for Images */}
           <div
-            className="relative rounded-3xl overflow-hidden neon-border"
+            className="relative rounded-3xl overflow-hidden neon-border perspective-1000"
             style={{ animation: "float 6s ease-in-out infinite" }}
           >
-            <img
-              src={heroImg}
-              alt="Futuristic dashboard"
-              width={1536}
-              height={1024}
-              className="w-full h-auto"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
-          </div>
-          <div className="absolute -bottom-6 -left-6 glass-strong rounded-2xl p-4 shadow-glow hidden sm:block">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 grid place-items-center rounded-lg bg-primary/20">
-                <Network className="h-5 w-5 text-cyan-glow" />
+            <div
+              className={`relative transition-all duration-700 preserve-3d ${isFlipped ? "rotate-y-180" : ""}`}
+            >
+              {/* Front Image - CleanIt */}
+              <div className="backface-hidden">
+                <img
+                  src={heroImg}
+                  alt="CleanIt App Dashboard"
+                  width={1536}
+                  height={1024}
+                  className="w-full h-auto"
+                />
               </div>
-              <div>
-                <div className="text-sm font-semibold">Live Systems</div>
-                <div className="text-xs text-muted-foreground">All operational</div>
+
+              {/* Back Image - POS System */}
+              <div className="absolute inset-0 backface-hidden rotate-y-180">
+                <img
+                  src={heroImg2}
+                  alt="POS System Dashboard"
+                  width={1536}
+                  height={1024}
+                  className="w-full h-auto"
+                />
               </div>
             </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
           </div>
-          <div className="absolute -top-6 -right-6 glass-strong rounded-2xl p-4 shadow-glow hidden sm:block">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 grid place-items-center rounded-lg bg-cyan-glow/20">
-                <Rocket className="h-5 w-5 text-cyan-glow" />
-              </div>
-              <div>
-                <div className="text-sm font-semibold">CleanIt App</div>
-                <div className="text-xs text-muted-foreground">Launching 2026</div>
+
+          {/* Flip Indicator Dots for Images */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            <button
+              onClick={() => setIsFlipped(false)}
+              className={`w-2 h-2 rounded-full transition-all ${!isFlipped ? "w-4 bg-cyan-glow" : "bg-white/50"}`}
+            />
+            <button
+              onClick={() => setIsFlipped(true)}
+              className={`w-2 h-2 rounded-full transition-all ${isFlipped ? "w-4 bg-cyan-glow" : "bg-white/50"}`}
+            />
+          </div>
+
+          {/* 3D Flip Card for CleanIt / POS System Text - Same size and style */}
+          <div className="absolute -top-6 -right-6 hidden sm:block">
+            <div className="glass-strong rounded-2xl p-4 shadow-glow perspective-1000">
+              <div
+                className={`relative transition-all duration-700 preserve-3d ${isFlipped ? "rotate-y-180" : ""}`}
+              >
+                {/* Front Side - CleanIt App */}
+                <div className="backface-hidden">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 grid place-items-center rounded-lg bg-cyan-glow/20">
+                      <Smartphone className="h-5 w-5 text-cyan-glow" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">CleanIt App</div>
+                      <div className="text-xs text-muted-foreground">Launching June 2026</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Back Side - POS System */}
+                <div className="absolute inset-0 backface-hidden rotate-y-180">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 grid place-items-center rounded-lg bg-cyan-glow/20">
+                      <Monitor className="h-5 w-5 text-cyan-glow" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">POS System</div>
+                      <div className="text-xs text-muted-foreground">Previous Projects</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -324,13 +370,14 @@ function Services() {
       points: ["Hardware & Software", "Network Support", "System Maintenance"],
     },
     {
-      icon: Smartphone,
+      img: cleanItLogo,
       tag: "Mobile App",
       name: "CleanIt",
       body: "An on-demand cleaning service. Clients post their request — location, schedule, type of cleaning — and assigned field employees can accept the job and head straight to the client's location.",
       points: ["Booking System", "Field Dispatch", "Real-time Updates"],
     },
   ];
+
   return (
     <Section
       id="services"
@@ -347,9 +394,17 @@ function Services() {
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition" />
             <div className="relative">
               <div className="flex items-center justify-between">
-                <div className="h-14 w-14 grid place-items-center rounded-2xl bg-gradient-to-br from-primary to-cyan-glow shadow-glow">
-                  <s.icon className="h-6 w-6 text-background" />
-                </div>
+                {s.img ? (
+                  <img
+                    src={s.img}
+                    className="h-14 w-14 object-contain rounded-xl"
+                    alt={`${s.name} logo`}
+                  />
+                ) : (
+                  <div className="h-14 w-14 grid place-items-center rounded-2xl bg-gradient-to-br from-primary to-cyan-glow shadow-glow">
+                    <s.icon className="h-6 w-6 text-background" />
+                  </div>
+                )}
                 <span className="text-[11px] uppercase tracking-[0.25em] text-cyan-glow">
                   {s.tag}
                 </span>
@@ -365,7 +420,7 @@ function Services() {
                 ))}
               </ul>
               <a
-                href="#contact"
+                href="https://cleanit.business/"
                 className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all"
               >
                 Learn more <ArrowRight className="h-4 w-4" />
