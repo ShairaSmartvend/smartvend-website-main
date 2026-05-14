@@ -68,14 +68,10 @@ function Section({
               </div>
             )}
             {title && (
-              <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-                {title}
-              </h2>
+              <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">{title}</h2>
             )}
             {subtitle && (
-              <p className="mt-4 text-base md:text-lg text-muted-foreground">
-                {subtitle}
-              </p>
+              <p className="mt-4 text-base md:text-lg text-muted-foreground">{subtitle}</p>
             )}
           </div>
         )}
@@ -104,14 +100,15 @@ function Hero() {
             <Sparkles className="h-3.5 w-3.5" />
             Smartvend System Corporation
           </div>
+
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.05]">
-            Smart Digital <br />
-            <span className="text-gradient">Solutions</span> for <br />
-            Modern Businesses
+            Where Good <br />
+            <span className="text-gradient">Ideas</span> Become <br />
+            Great <span className="text-gradient">Systems</span>
           </h1>
           <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl">
-            We provide innovative, reliable, and user-friendly technology solutions
-            designed to improve businesses and everyday services.
+            We provide innovative, reliable, and user-friendly technology solutions designed to
+            improve businesses and everyday services.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a
@@ -193,11 +190,7 @@ function About() {
     { icon: Headphones, v: "Reliable", l: "Customer Support" },
   ];
   return (
-    <Section
-      id="about"
-      eyebrow="About Us"
-      title="Built by classmates, driven by purpose."
-    >
+    <Section id="about" eyebrow="About Us" title="Built by classmates, driven by purpose.">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         <div className="relative">
           <div className="absolute -inset-4 bg-gradient-to-tr from-primary/30 to-cyan-glow/20 blur-2xl rounded-3xl" />
@@ -214,15 +207,15 @@ function About() {
         </div>
         <div>
           <p className="text-muted-foreground leading-relaxed">
-            Smartvend System Corp. began as a vision between two classmates who wanted
-            to build a technology company that delivers real value. What started as a
-            shared ambition has evolved into a growing startup focused on creating
-            smart and practical digital solutions.
+            Smartvend System Corp. began as a vision between two classmates who wanted to build a
+            technology company that delivers real value. What started as a shared ambition has
+            evolved into a growing startup focused on creating smart and practical digital
+            solutions.
           </p>
           <p className="mt-4 text-muted-foreground leading-relaxed">
-            Our goal is to improve how businesses operate and how people experience
-            everyday services by providing efficient, reliable, and user-friendly
-            technology — innovative, meaningful, and accessible.
+            Our goal is to improve how businesses operate and how people experience everyday
+            services by providing efficient, reliable, and user-friendly technology — innovative,
+            meaningful, and accessible.
           </p>
 
           <div className="mt-8 grid grid-cols-2 gap-4">
@@ -245,23 +238,17 @@ function History() {
     {
       year: "2025",
       title: "The company was founded",
-      body:
-        "On January 25, the company was established through the shared dream and vision of two former classmates who aspired to build something meaningful together. What began as a simple idea rooted in friendship, determination, and ambition gradually became the foundation of the organization.",
+      body: "On January 25, the company was established through the shared dream and vision of two former classmates who aspired to build something meaningful together. What began as a simple idea rooted in friendship, determination, and ambition gradually became the foundation of the organization.",
     },
     {
       year: "2026",
       title: "CleanIt app launches",
-      body:
-        "This April, one of the company's major milestones will be introduced to the public through the launch of the CleanIt app — a continuous step in providing convenient and reliable cleaning service solutions to more people effectively.",
+      body: "This April, one of the company's major milestones will be introduced to the public through the launch of the CleanIt app — a continuous step in providing convenient and reliable cleaning service solutions to more people effectively.",
     },
   ];
 
   return (
-    <Section
-      id="history"
-      eyebrow="Our History"
-      title="Milestones that shaped us."
-    >
+    <Section id="history" eyebrow="Our History" title="Milestones that shaped us.">
       <div className="relative">
         <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary to-transparent" />
         <div className="space-y-12">
@@ -281,9 +268,7 @@ function History() {
               <div className="pl-12 md:pl-12 mt-3 md:mt-0 [direction:ltr]">
                 <div className="glass rounded-2xl p-6 glow-hover">
                   <h3 className="font-semibold text-lg">{e.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    {e.body}
-                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{e.body}</p>
                 </div>
               </div>
             </div>
@@ -302,14 +287,12 @@ function VisionMission() {
           {
             icon: Eye,
             title: "Vision",
-            body:
-              "To become a trusted technology company in the Philippines, known for delivering useful and impactful innovations that improve daily life and support business growth.",
+            body: "To become a trusted technology company in the Philippines, known for delivering useful and impactful innovations that improve daily life and support business growth.",
           },
           {
             icon: Target,
             title: "Mission",
-            body:
-              "To create reliable and user-friendly technology that transforms how services are delivered. We aim to solve real problems, improve efficiency, and bring convenience to both businesses and customers through smart digital solutions.",
+            body: "To create reliable and user-friendly technology that transforms how services are delivered. We aim to solve real problems, improve efficiency, and bring convenience to both businesses and customers through smart digital solutions.",
           },
         ].map((c) => (
           <div
@@ -337,16 +320,14 @@ function Services() {
       icon: Cpu,
       tag: "Technology",
       name: "IT Services",
-      body:
-        "Technology-related solutions and support including computer troubleshooting, software and hardware assistance, system maintenance, network support, installation and configuration — tailored to client needs.",
+      body: "Technology-related solutions and support including computer troubleshooting, software and hardware assistance, system maintenance, network support, installation and configuration — tailored to client needs.",
       points: ["Hardware & Software", "Network Support", "System Maintenance"],
     },
     {
       icon: Smartphone,
       tag: "Mobile App",
       name: "CleanIt",
-      body:
-        "An on-demand cleaning service. Clients post their request — location, schedule, type of cleaning — and assigned field employees can accept the job and head straight to the client's location.",
+      body: "An on-demand cleaning service. Clients post their request — location, schedule, type of cleaning — and assigned field employees can accept the job and head straight to the client's location.",
       points: ["Booking System", "Field Dispatch", "Real-time Updates"],
     },
   ];
@@ -427,9 +408,7 @@ function Portfolio() {
                 <div className="mx-auto h-12 w-12 rounded-xl glass grid place-items-center mb-3">
                   <Sparkles className="h-5 w-5 text-cyan-glow" />
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {it.label}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">{it.label}</p>
                 <span className="mt-2 inline-block text-[10px] uppercase tracking-[0.25em] text-primary">
                   {it.tag}
                 </span>
@@ -532,20 +511,10 @@ function Contact() {
   );
 }
 
-function Field({
-  label,
-  type,
-  placeholder,
-}: {
-  label: string;
-  type: string;
-  placeholder: string;
-}) {
+function Field({ label, type, placeholder }: { label: string; type: string; placeholder: string }) {
   return (
     <div>
-      <label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        {label}
-      </label>
+      <label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{label}</label>
       <input
         required
         type={type}
