@@ -114,7 +114,7 @@ export function Nav() {
                 SMARTVEND
               </div>
               <div className="text-[11px] sm:text-xs text-muted-foreground tracking-[0.2em]">
-                SYSTEM CORP.
+                SYSTEM CORPORATION
               </div>
             </div>
           </a>

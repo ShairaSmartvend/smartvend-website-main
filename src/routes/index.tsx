@@ -110,10 +110,10 @@ function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-5 grid lg:grid-cols-2 gap-12 items-center">
         <div className="animate-fade-up">
-          <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-primary">
+          {/* {<div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-primary">
             <Sparkles className="h-3.5 w-3.5" />
             Smartvend System Corporation
-          </div>
+          </div> */}
 
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.05]">
             Where Good <br />

@@ -1,4 +1,5 @@
 import { Github, Linkedin, Twitter, Facebook } from "lucide-react";
+import logoSVSC from "@/assets/logo-svsc-main.png";
 
 const links = [
   { href: "#home", label: "Home" },
@@ -15,12 +16,17 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-14 grid gap-10 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-9 w-9 grid place-items-center rounded-lg bg-gradient-to-br from-primary to-cyan-glow text-background font-display font-extrabold shadow-glow">
-              S
+            <span className="relative flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
+              {/* Automatic continuous diagonal shining effect */}
+              <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-blue-400/60 to-transparent skew-x-[-20deg]" />
+
+              <img src={logoSVSC} className="h-12 w-12 object-contain relative z-10" />
             </span>
             <div>
               <div className="font-display font-bold">SMARTVEND</div>
-              <div className="text-[11px] tracking-[0.2em] text-muted-foreground">SYSTEM CORP.</div>
+              <div className="text-[11px] tracking-[0.2em] text-muted-foreground">
+                SYSTEM CORPORATION
+              </div>
             </div>
           </div>
           <p className="mt-4 text-sm text-muted-foreground max-w-sm">
@@ -33,7 +39,9 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             {links.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="hover:text-primary transition-colors">{l.label}</a>
+                <a href={l.href} className="hover:text-primary transition-colors">
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>
