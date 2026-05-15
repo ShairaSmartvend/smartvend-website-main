@@ -102,11 +102,11 @@ export function Nav() {
         >
           {/* LOGO - BIGGER SIZE, NO HOVER EFFECT */}
           <a href="#home" className="flex items-center gap-3">
-            <span className="relative flex h-16 w-16 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
+            <span className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
               {/* Automatic continuous diagonal shining effect */}
               <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-blue-400/60 to-transparent skew-x-[-20deg]" />
 
-              <img src={logoSVSC} className="h-12 w-12 object-contain relative z-10" />
+              <img src={logoSVSC} className="h-13 w-13 object-contain relative z-10" />
             </span>
 
             <div className="leading-tight">

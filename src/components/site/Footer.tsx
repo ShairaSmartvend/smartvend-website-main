@@ -16,11 +16,11 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-14 grid gap-10 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="relative flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
+            <span className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
               {/* Automatic continuous diagonal shining effect */}
               <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-blue-400/60 to-transparent skew-x-[-20deg]" />
 
-              <img src={logoSVSC} className="h-12 w-12 object-contain relative z-10" />
+              <img src={logoSVSC} className="h-13 w-13 object-contain relative z-10" />
             </span>
             <div>
               <div className="font-display font-bold">SMARTVEND</div>
