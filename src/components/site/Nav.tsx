@@ -6,6 +6,7 @@ const links = [
   { href: "#about", label: "About Us" },
   { href: "#services", label: "Services" },
   { href: "#portfolio", label: "Portfolio" },
+  { href: "#projects", label: "Build With Us" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -18,9 +19,7 @@ export function Nav() {
     const onScroll = () => setScrolled(window.scrollY > 20);
 
     const handleActiveSection = () => {
-      let current = "#home";
-
-      // Check each main section
+      // Check each main section first
       for (const link of links) {
         const section = document.querySelector(link.href);
         if (!section) continue;
@@ -29,37 +28,36 @@ export function Nav() {
         const buffer = 150;
 
         if (rect.top <= buffer && rect.bottom >= buffer) {
-          current = link.href;
-          break;
+          setActive(link.href);
+          return;
         }
       }
 
-      // Check ALL About sub-sections (History AND Mission & Vision)
+      // Check About sub-sections
       const aboutSection = document.querySelector("#about");
       const historySection = document.querySelector("#history");
-      const missionVisionSection = document.querySelector("#mission-vision");
-
       const missionSection = document.querySelector("#mission");
       const visionSection = document.querySelector("#vision");
-      const missionAndVision = document.querySelector("#mission-and-vision");
 
       const scrollY = window.scrollY;
 
-      const isElementInView = (element: Element | null) => {
+      const isInView = (element: Element | null) => {
         if (!element) return false;
         const rect = element.getBoundingClientRect();
         return rect.top <= 150 && rect.bottom >= 150;
       };
 
-      const isInAbout =
-        isElementInView(aboutSection) ||
-        isElementInView(historySection) ||
-        isElementInView(missionVisionSection) ||
-        isElementInView(missionSection) ||
-        isElementInView(visionSection) ||
-        isElementInView(missionAndVision);
+      const isInAboutSubsections =
+        isInView(historySection) || isInView(missionSection) || isInView(visionSection);
 
-      if (aboutSection && !isInAbout) {
+      // If we're in About sub-sections, set About as active
+      if (isInAboutSubsections) {
+        setActive("#about");
+        return;
+      }
+
+      // Check if we're in the main About section
+      if (aboutSection) {
         const aboutRect = aboutSection.getBoundingClientRect();
         const aboutTop = aboutRect.top + window.scrollY;
         const aboutBottom = aboutRect.bottom + window.scrollY;
@@ -70,11 +68,17 @@ export function Nav() {
         }
       }
 
-      if (isInAbout) {
-        current = "#about";
-      }
+      // If no section is found, check which section is currently visible
+      for (const link of links) {
+        const section = document.querySelector(link.href);
+        if (!section) continue;
 
-      setActive(current);
+        const sectionTop = section.getBoundingClientRect().top;
+        if (sectionTop <= 100) {
+          setActive(link.href);
+          return;
+        }
+      }
     };
 
     const onScrollCombined = () => {
@@ -100,13 +104,11 @@ export function Nav() {
             scrolled ? "glass-strong shadow-glow" : "bg-transparent"
           }`}
         >
-          {/* LOGO - BIGGER SIZE, NO HOVER EFFECT */}
+          {/* LOGO */}
           <a href="#home" className="flex items-center gap-3">
-            <span className="relative flex h-16 w-16 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
-              {/* Automatic continuous diagonal shining effect */}
+            <span className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
               <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-blue-400/60 to-transparent skew-x-[-20deg]" />
-
-              <img src={logoSVSC} className="h-12 w-12 object-contain relative z-10" />
+              <img src={logoSVSC} className="h-13 w-13 object-contain relative z-10" />
             </span>
 
             <div className="leading-tight">
@@ -133,7 +135,6 @@ export function Nav() {
               >
                 {l.label}
 
-                {/* UNDERLINE - consistent for all nav items */}
                 <span
                   className={`absolute left-4 right-4 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-cyan-glow to-primary transition-transform duration-300 origin-left ${
                     active === l.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
