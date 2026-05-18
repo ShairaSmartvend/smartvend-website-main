@@ -1,49 +1,111 @@
-import { Sparkles } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import { Section } from "./Section";
+import cleanItLogo from "@/assets/cleanit-logo.jpg";
+import posproject from "@/assets/pos_project.png";
+import cleanitapp from "@/assets/cleanIt.png";
 
 export function Portfolio() {
-  const items = [
-    { label: "Insert Latest Project Photo Here", tall: true, tag: "CleanIt UI" },
-    { label: "Upcoming Project Showcase", tall: false, tag: "IT Deployment" },
-    { label: "Insert Latest Project Photo Here", tall: false, tag: "Dashboard" },
-    { label: "Upcoming Project Showcase", tall: true, tag: "Mobile App" },
-    { label: "Insert Latest Project Photo Here", tall: false, tag: "Network" },
+  const projects = [
+    {
+      img: posproject,
+      tag: "Cloud-Based POS Platform",
+      name: "POS System",
+      body: "A cloud-based point-of-sale system that enables real-time sales tracking, inventory management, and secure data access across multiple devices.",
+      features: [
+        "Real-time Sales Tracking",
+        "Inventory Management",
+        "Multi-device Access",
+        "Secure Data",
+      ],
+      link: null,
+      linkText: "View Project",
+    },
+    {
+      img: cleanitapp,
+      tag: "Mobile App",
+      name: "CleanIt",
+      body: "CleanIt makes home cleaning effortless by connecting you with trusted, professional cleaners through a simple and secure mobile app.",
+      features: ["Booking System", "Field Dispatch", "Real-time Updates", "Verified Cleaners"],
+      link: "https://cleanit.business/",
+      linkText: "Learn More",
+    },
   ];
+
   return (
     <Section
       id="portfolio"
-      eyebrow="Latest Portfolio"
-      title="Work in progress, ready to showcase."
-      subtitle="Reserved spaces for our current builds and upcoming launches."
+      eyebrow="Our Portfolio"
+      title="Solutions designed for real impact."
+      subtitle="Two flagship offerings that combine reliable engineering with thoughtful, user-friendly experiences."
     >
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        {items.map((it, i) => (
+      <div className="grid md:grid-cols-2 gap-6">
+        {projects.map((project, index) => (
           <div
-            key={i}
-            className={`group relative overflow-hidden rounded-2xl glass neon-border ${
-              it.tall ? "row-span-2 aspect-[3/5]" : "aspect-[4/3]"
-            }`}
+            key={index}
+            className="group relative glass rounded-2xl overflow-hidden glow-hover transition-all duration-500 hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-cyan-glow/10" />
-            <div className="absolute inset-0 grid-bg opacity-30" />
-            <div className="absolute inset-0 grid place-items-center text-center p-4">
-              <div>
-                <div className="mx-auto h-12 w-12 rounded-xl glass grid place-items-center mb-3">
-                  <Sparkles className="h-5 w-5 text-cyan-glow" />
-                </div>
-                <p className="text-sm font-medium text-muted-foreground">{it.label}</p>
-                <span className="mt-2 inline-block text-[10px] uppercase tracking-[0.25em] text-primary">
-                  {it.tag}
+            {/* Lighting effects */}
+            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition duration-500" />
+            <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl group-hover:bg-cyan-500/20 transition duration-500" />
+            
+            {/* Image Section */}
+            <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-cyan-glow/5">
+              <img
+                src={project.img}
+                className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                alt={`${project.name} project`}
+              />
+
+              {/* Tag badge - Larger and more prominent */}
+              <div className="absolute top-3 right-3">
+                <span className="text-[11px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm text-cyan-glow font-semibold border border-white/10">
+                  {project.tag}
                 </span>
               </div>
             </div>
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div>
-                <div className="text-xs uppercase tracking-[0.25em] text-cyan-glow">
-                  Project Preview
-                </div>
-                <div className="mt-1 font-semibold">{it.tag}</div>
+
+            {/* Content Section */}
+            <div className="relative p-5">
+              {/* Title - Larger */}
+              <h3 className="text-2xl font-bold group-hover:text-primary transition-colors duration-300">
+                {project.name}
+              </h3>
+
+              {/* Description */}
+              <p className="mt-2 text-muted-foreground leading-relaxed text-sm line-clamp-3">
+                {project.body}
+              </p>
+
+              {/* Features - Same design as header tags */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.features.map((feature, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] px-2.5 py-1.5 rounded-full bg-primary/10 text-cyan-glow font-medium border border-primary/20"
+                  >
+                    <CheckCircle2 className="h-3 w-3 text-cyan-glow" />
+                    {feature}
+                  </span>
+                ))}
               </div>
+
+              {/* Conditional Link */}
+              {project.link ? (
+                <a
+                  href={project.link}
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all duration-300"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {project.linkText} <ArrowRight className="h-4 w-4" />
+                </a>
+              ) : (
+                <div className="mt-5">
+                  <span className="inline-flex items-center gap-2 text-xs text-muted-foreground/50">
+                    Coming soon
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         ))}

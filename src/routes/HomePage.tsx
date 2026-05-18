@@ -17,8 +17,8 @@ export function HomePage() {
       <main>
         <Hero />
         <About />
-        <History />
-        <VisionMission />
+        {/*<History />
+        <VisionMission />*/}
         <Services />
         <Trust />
         <Portfolio />

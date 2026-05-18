@@ -125,7 +125,7 @@ export function Nav() {
 
           {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-1">
-            {links.map((l) => (
+            {links.map(l => (
               <a
                 key={l.href}
                 href={l.href}
@@ -157,7 +157,7 @@ export function Nav() {
 
             <button
               aria-label="Menu"
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => setOpen(v => !v)}
               className="md:hidden h-10 w-10 grid place-items-center rounded-lg glass"
             >
               <div className="space-y-1.5">
@@ -172,7 +172,7 @@ export function Nav() {
         {/* MOBILE MENU */}
         {open && (
           <div className="md:hidden mt-2 glass-strong rounded-2xl p-3 animate-fade-up">
-            {links.map((l) => (
+            {links.map(l => (
               <a
                 key={l.href}
                 href={l.href}

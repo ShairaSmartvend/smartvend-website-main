@@ -9,7 +9,7 @@ export function Hero() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsFlipped((prev) => !prev);
+      setIsFlipped(prev => !prev);
     }, 4000);
 
     return () => clearInterval(interval);

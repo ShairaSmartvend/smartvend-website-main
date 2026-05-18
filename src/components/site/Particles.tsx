@@ -10,7 +10,8 @@ export function Particles() {
     if (!ctx) return;
 
     let raf = 0;
-    let w = 0, h = 0;
+    let w = 0,
+      h = 0;
     const dots: { x: number; y: number; vx: number; vy: number }[] = [];
 
     const resize = () => {
@@ -32,14 +33,17 @@ export function Particles() {
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
       for (const d of dots) {
-        d.x += d.vx; d.y += d.vy;
+        d.x += d.vx;
+        d.y += d.vy;
         if (d.x < 0 || d.x > w) d.vx *= -1;
         if (d.y < 0 || d.y > h) d.vy *= -1;
       }
       for (let i = 0; i < dots.length; i++) {
         for (let j = i + 1; j < dots.length; j++) {
-          const a = dots[i], b = dots[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
+          const a = dots[i],
+            b = dots[j];
+          const dx = a.x - b.x,
+            dy = a.y - b.y;
           const dist = Math.hypot(dx, dy);
           if (dist < 140 * devicePixelRatio) {
             ctx.strokeStyle = `rgba(10,132,255,${0.25 * (1 - dist / (140 * devicePixelRatio))})`;
@@ -63,7 +67,10 @@ export function Particles() {
     resize();
     init();
     draw();
-    const onResize = () => { resize(); init(); };
+    const onResize = () => {
+      resize();
+      init();
+    };
     window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
@@ -71,10 +78,5 @@ export function Particles() {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={ref}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-    />
-  );
+  return <canvas ref={ref} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }

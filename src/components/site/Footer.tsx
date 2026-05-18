@@ -37,7 +37,7 @@ export function Footer() {
         <div>
           <h4 className="font-semibold mb-3">Quick Links</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            {links.map((l) => (
+            {links.map(l => (
               <li key={l.href}>
                 <a href={l.href} className="hover:text-primary transition-colors">
                   {l.label}

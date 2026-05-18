@@ -16,7 +16,7 @@ export function VisionMission() {
             title: "Mission",
             body: "To create reliable and user-friendly technology that transforms how services are delivered. We aim to solve real problems, improve efficiency, and bring convenience to both businesses and customers through smart digital solutions.",
           },
-        ].map((c) => (
+        ].map(c => (
           <div
             key={c.title}
             className="relative glass-strong rounded-3xl p-8 md:p-10 glow-hover overflow-hidden"
