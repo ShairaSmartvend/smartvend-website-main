@@ -88,7 +88,7 @@ export function Services() {
         {services.map((service, index) => (
           <div
             key={index}
-            className="group relative glass rounded-3xl p-8 overflow-hidden glow-hover border border-white/10 bg-white/5 backdrop-blur-sm"
+            className="group relative rounded-3xl p-8 overflow-hidden transition-all duration-300 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400"
           >
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition" />
             <div className="relative">

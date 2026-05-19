@@ -1,8 +1,9 @@
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { Section } from "./Section";
-import cleanItLogo from "@/assets/cleanit-logo.jpg";
-import posproject from "@/assets/pos_project.png";
+import posproject from "@/assets/pos.png";
 import cleanitapp from "@/assets/cleanIt.png";
+import cleanitweb from "@/assets/cleanit_web.png";
+import adminweb from "@/assets/cleanItadmin.png";
 
 export function Portfolio() {
   const projects = [
@@ -27,7 +28,37 @@ export function Portfolio() {
       body: "CleanIt makes home cleaning effortless by connecting you with trusted, professional cleaners through a simple and secure mobile app.",
       features: ["Booking System", "Field Dispatch", "Real-time Updates", "Verified Cleaners"],
       link: "https://cleanit.business/",
+      linkText: "Download on Android",
+      // link: "https://cleanit.business/",
+      // linkText: "Download on iOs",
+    },
+    {
+      img: cleanitweb,
+      tag: "Website",
+      name: "CleanIt Website",
+      body: "CleanIt is a modern informational website that presents professional home cleaning services and provides clear insights into the company's offerings and credibility.",
+      features: [
+        "Service Information",
+        "Company Profile",
+        "Cleaning Solutions Overview",
+        "Trusted Service Provider",
+      ],
+      link: "https://cleanit.business/",
       linkText: "Learn More",
+    },
+    {
+      img: adminweb,
+      tag: "Website",
+      name: "CleanIt Admin Panel",
+      body: "CleanIt Admin Panel is a centralized management system designed to help administrators efficiently monitor bookings, manage cleaners, track services, and oversee overall platform operations in real time.",
+      features: [
+        "Booking Management",
+        "Cleaner Monitoring",
+        "Service Tracking Dashboard",
+        "Administrative Controls",
+      ],
+      link: null,
+      linkText: "View Project",
     },
   ];
 
@@ -42,12 +73,12 @@ export function Portfolio() {
         {projects.map((project, index) => (
           <div
             key={index}
-            className="group relative glass rounded-2xl overflow-hidden glow-hover transition-all duration-500 hover:scale-[1.02]"
+            className="group relative rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400"
           >
             {/* Lighting effects */}
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition duration-500" />
             <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl group-hover:bg-cyan-500/20 transition duration-500" />
-            
+
             {/* Image Section */}
             <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-cyan-glow/5">
               <img
@@ -56,7 +87,7 @@ export function Portfolio() {
                 alt={`${project.name} project`}
               />
 
-              {/* Tag badge - Larger and more prominent */}
+              {/* Tag badge */}
               <div className="absolute top-3 right-3">
                 <span className="text-[11px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm text-cyan-glow font-semibold border border-white/10">
                   {project.tag}
@@ -66,7 +97,7 @@ export function Portfolio() {
 
             {/* Content Section */}
             <div className="relative p-5">
-              {/* Title - Larger */}
+              {/* Title */}
               <h3 className="text-2xl font-bold group-hover:text-primary transition-colors duration-300">
                 {project.name}
               </h3>
@@ -76,7 +107,7 @@ export function Portfolio() {
                 {project.body}
               </p>
 
-              {/* Features - Same design as header tags */}
+              {/* Features */}
               <div className="mt-4 flex flex-wrap gap-2">
                 {project.features.map((feature, idx) => (
                   <span
@@ -102,7 +133,7 @@ export function Portfolio() {
               ) : (
                 <div className="mt-5">
                   <span className="inline-flex items-center gap-2 text-xs text-muted-foreground/50">
-                    Coming soon
+                    {/* Coming soon - placeholder for future projects */}
                   </span>
                 </div>
               )}

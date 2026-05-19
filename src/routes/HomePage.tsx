@@ -20,7 +20,7 @@ export function HomePage() {
         {/*<History />
         <VisionMission />*/}
         <Services />
-        <Trust />
+        {/* <Trust /> */}
         <Portfolio />
         <ProjectsSection />
         <Contact />

@@ -41,13 +41,13 @@ export function Hero() {
           <div className="mt-8 flex flex-wrap gap-4">
             <a
               href="#services"
-              className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold bg-gradient-to-r from-primary to-cyan-glow text-background shadow-glow hover:shadow-glow-strong transition-all hover:scale-[1.03]"
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold bg-gradient-to-r from-primary to-cyan-glow text-white shadow-glow hover:shadow-glow-strong transition-all hover:scale-[1.03]"
             >
               Explore Services <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold glass neon-border hover:bg-primary/10 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold glass neon-border hover:bg-primary/10 transition-all hover:scale-[1.03]"
             >
               Contact Us
             </a>
