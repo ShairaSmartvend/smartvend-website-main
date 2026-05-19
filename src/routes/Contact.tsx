@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { Phone, Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Phone, Mail, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { Section } from "./Section";
+import emailjs from "@emailjs/browser";
 
 export function Contact() {
   const [sent, setSent] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,16 +16,64 @@ export function Contact() {
     message: "",
   });
 
-  const handleSubmit = e => {
+  // Initialize EmailJS once on component mount
+  useEffect(() => {
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    if (publicKey) {
+      emailjs.init(publicKey);
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
+    setError("");
+
+    // Validate form
+    if (!formData.name || !formData.email || !formData.message) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+
+    if (!serviceId || !templateId) {
+      setError("Email service not configured. Please contact support.");
+      setIsLoading(false);
+      return;
+    }
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      from_phone: formData.phone,
+      to_name: "Smartvend",
+      message: formData.message,
+      time: new Date().toLocaleString(),
+    };
+
+    try {
+      await emailjs.send(serviceId, templateId, templateParams);
+      setSent(true);
       setFormData({ name: "", email: "", phone: "", message: "" });
-    }, 4000);
+      setTimeout(() => setSent(false), 4000);
+    } catch (err) {
+      console.error("Error sending email:", err);
+      setError("Failed to send message. Please try again later.");
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     // Phone number validation: numbers only, max 12 characters
@@ -36,7 +87,7 @@ export function Contact() {
     }
   };
 
-  const handleFocus = field => {
+  const handleFocus = (field: string) => {
     setFocusedField(field);
   };
 
@@ -154,8 +205,9 @@ export function Contact() {
                         onFocus={() => handleFocus("name")}
                         onBlur={handleBlur}
                         required
+                        disabled={isLoading}
                         placeholder="Juan Dela Cruz"
-                        className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10"
+                        className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -175,8 +227,9 @@ export function Contact() {
                         onFocus={() => handleFocus("email")}
                         onBlur={handleBlur}
                         required
+                        disabled={isLoading}
                         placeholder="juan@gmail.com"
-                        className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10"
+                        className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -197,8 +250,9 @@ export function Contact() {
                       onChange={handleChange}
                       onFocus={() => handleFocus("phone")}
                       onBlur={handleBlur}
+                      disabled={isLoading}
                       placeholder="09123456789"
-                      className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10"
+                      className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -215,23 +269,35 @@ export function Contact() {
                       required
                       name="message"
                       value={formData.message}
-                      onChange={handleChange}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        setFormData({ ...formData, message: e.target.value });
+                      }}
                       onFocus={() => handleFocus("message")}
                       onBlur={handleBlur}
+                      disabled={isLoading}
                       rows={5}
                       placeholder="Tell us about your project or inquiry..."
-                      className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 resize-none z-10"
+                      className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 resize-none z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="flex items-center gap-2 text-red-500 bg-red-500/10 rounded-lg p-3 text-sm border border-red-500/30">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
                 {/* Send Message Button - Subtle Effects */}
                 <div className="relative w-full">
                   <button
                     type="submit"
+                    disabled={isLoading}
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
-                    className="relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98]"
+                    className="relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
                   >
                     {/* Subtle shine effect on hover */}
                     <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -241,6 +307,11 @@ export function Contact() {
                         <>
                           <CheckCircle2 className="h-4 w-4" />
                           <span>Message Sent!</span>
+                        </>
+                      ) : isLoading ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <span>Sending...</span>
                         </>
                       ) : (
                         <>
@@ -262,8 +333,8 @@ export function Contact() {
                     <div className="bg-gradient-to-r from-cyan-600 to-blue-700 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3">
                       <CheckCircle2 className="h-5 w-5" />
                       <div>
-                        <p className="font-semibold">Thank you!</p>
-                        <p className="text-sm">We'll respond within 24 hours</p>
+                        <p className="font-semibold">Thanks for contacting us! </p>
+                        <p className="text-sm">We’ll reply as soon as possible.</p>
                       </div>
                     </div>
                   </div>
@@ -274,7 +345,7 @@ export function Contact() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-up {
           from {
             transform: translateY(100%);

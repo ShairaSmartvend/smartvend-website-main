@@ -21,7 +21,9 @@ import {
   Rocket,
   Trophy,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 export function ProjectsSection() {
   const titleRef = useRef(null);
@@ -40,11 +42,12 @@ export function ProjectsSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
   const [isProjectTypeOpen, setIsProjectTypeOpen] = useState(false);
   const [isHourOpen, setIsHourOpen] = useState(false);
   const [isMinuteOpen, setIsMinuteOpen] = useState(false);
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
-  
+
   const projectTypeRef = useRef(null);
   const hourRef = useRef(null);
   const minuteRef = useRef(null);
@@ -61,6 +64,14 @@ export function ProjectsSection() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Initialize EmailJS once on component mount
+  useEffect(() => {
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    if (publicKey) {
+      emailjs.init(publicKey);
+    }
+  }, []);
+
   useEffect(() => {
     if (selectedProjectType && showModal) {
       setFormData(prev => ({ ...prev, projectType: selectedProjectType }));
@@ -68,7 +79,7 @@ export function ProjectsSection() {
   }, [selectedProjectType, showModal]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (projectTypeRef.current && !projectTypeRef.current.contains(event.target)) {
         setIsProjectTypeOpen(false);
       }
@@ -104,11 +115,46 @@ export function ProjectsSection() {
     });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    setError("");
+
+    // Validate form
+    if (!formData.name || !formData.email || !formData.message || !formData.date) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+
+    if (!serviceId || !templateId) {
+      setError("Email service not configured. Please contact support.");
       setIsSubmitting(false);
+      return;
+    }
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      from_phone: formData.phone,
+      to_name: "Smartvend",
+      project_type: formData.projectType,
+      consultation_date: formData.date,
+      consultation_time: `${formData.hour}:${formData.minute} ${formData.period}`,
+      message: formData.message,
+      time: new Date().toLocaleString(),
+    };
+
+    try {
+      await emailjs.send(serviceId, templateId, templateParams);
       setSubmitted(true);
       setTimeout(() => {
         setShowModal(false);
@@ -126,7 +172,13 @@ export function ProjectsSection() {
           message: "",
         });
       }, 2000);
-    }, 1500);
+    } catch (err) {
+      console.error("Error sending email:", err);
+      setError("Failed to send request. Please try again later.");
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const projectOptions = [
@@ -443,7 +495,7 @@ export function ProjectsSection() {
                   </div>
                   <h4 className="text-xl font-bold text-white mb-2">Request Sent!</h4>
                   <p className="text-gray-400">
-                    We'll contact you within 24 hours to confirm your consultation schedule.
+                    Thanks for contacting us! We’ll reply as soon as possible.
                   </p>
                 </div>
               ) : (
@@ -459,9 +511,10 @@ export function ProjectsSection() {
                           type="text"
                           name="name"
                           required
+                          disabled={isSubmitting}
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                           placeholder="Juan Dela Cruz"
                         />
                       </div>
@@ -476,9 +529,10 @@ export function ProjectsSection() {
                           type="email"
                           name="email"
                           required
+                          disabled={isSubmitting}
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                           placeholder="juan@example.com"
                         />
                       </div>
@@ -495,10 +549,11 @@ export function ProjectsSection() {
                         <input
                           type="tel"
                           name="phone"
+                          disabled={isSubmitting}
                           value={formData.phone}
                           onChange={handlePhoneChange}
                           maxLength={12}
-                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                          className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                           placeholder="09123456789"
                         />
                       </div>
@@ -514,15 +569,18 @@ export function ProjectsSection() {
                           className="w-full pl-20 pr-10 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-between transition-all duration-300 hover:border-cyan-400"
                         >
                           <span className={formData.projectType ? "text-white" : "text-gray-400"}>
-                            {formData.projectType 
-                              ? projectOptions.find(opt => opt.value === formData.projectType)?.label 
+                            {formData.projectType
+                              ? projectOptions.find(opt => opt.value === formData.projectType)
+                                  ?.label
                               : "Select project type"}
                           </span>
-                          <ChevronDown className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isProjectTypeOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown
+                            className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isProjectTypeOpen ? "rotate-180" : ""}`}
+                          />
                         </div>
                         {isProjectTypeOpen && (
                           <div className="absolute z-20 w-full mt-2 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
-                            {projectOptions.map((option) => {
+                            {projectOptions.map(option => {
                               const OptionIcon = option.icon;
                               return (
                                 <div
@@ -532,7 +590,9 @@ export function ProjectsSection() {
                                     setIsProjectTypeOpen(false);
                                   }}
                                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 hover:bg-cyan-500/10 ${
-                                    formData.projectType === option.value ? "bg-cyan-500/10 border-l-2 border-cyan-400" : ""
+                                    formData.projectType === option.value
+                                      ? "bg-cyan-500/10 border-l-2 border-cyan-400"
+                                      : ""
                                   }`}
                                 >
                                   <OptionIcon className="h-4 w-4 text-cyan-400" />
@@ -559,10 +619,11 @@ export function ProjectsSection() {
                           type="date"
                           name="date"
                           required
+                          disabled={isSubmitting}
                           min={today}
                           value={formData.date}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer"
+                          className="w-full px-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                         <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 pointer-events-none" />
                       </div>
@@ -582,11 +643,13 @@ export function ProjectsSection() {
                             <span className={formData.hour ? "text-white" : "text-gray-400"}>
                               {formData.hour || "Hour"}
                             </span>
-                            <ChevronDown className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isHourOpen ? "rotate-180" : ""}`} />
+                            <ChevronDown
+                              className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isHourOpen ? "rotate-180" : ""}`}
+                            />
                           </div>
                           {isHourOpen && (
                             <div className="absolute z-20 w-full mt-2 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl shadow-2xl overflow-hidden animate-fadeIn max-h-48 overflow-y-auto">
-                              {hourOptions.map((option) => (
+                              {hourOptions.map(option => (
                                 <div
                                   key={option.value}
                                   onClick={() => {
@@ -594,7 +657,9 @@ export function ProjectsSection() {
                                     setIsHourOpen(false);
                                   }}
                                   className={`px-4 py-2 cursor-pointer transition-all duration-200 hover:bg-cyan-500/10 text-center ${
-                                    formData.hour === option.value.toString() ? "bg-cyan-500/10 text-cyan-400" : "text-white"
+                                    formData.hour === option.value.toString()
+                                      ? "bg-cyan-500/10 text-cyan-400"
+                                      : "text-white"
                                   }`}
                                 >
                                   {option.label}
@@ -615,11 +680,13 @@ export function ProjectsSection() {
                             <span className={formData.minute ? "text-white" : "text-gray-400"}>
                               {formData.minute || "Min"}
                             </span>
-                            <ChevronDown className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isMinuteOpen ? "rotate-180" : ""}`} />
+                            <ChevronDown
+                              className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isMinuteOpen ? "rotate-180" : ""}`}
+                            />
                           </div>
                           {isMinuteOpen && (
                             <div className="absolute z-20 w-full mt-2 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
-                              {minuteOptions.map((option) => (
+                              {minuteOptions.map(option => (
                                 <div
                                   key={option.value}
                                   onClick={() => {
@@ -627,7 +694,9 @@ export function ProjectsSection() {
                                     setIsMinuteOpen(false);
                                   }}
                                   className={`px-4 py-2 cursor-pointer transition-all duration-200 hover:bg-cyan-500/10 text-center ${
-                                    formData.minute === option.value ? "bg-cyan-500/10 text-cyan-400" : "text-white"
+                                    formData.minute === option.value
+                                      ? "bg-cyan-500/10 text-cyan-400"
+                                      : "text-white"
                                   }`}
                                 >
                                   {option.label}
@@ -644,11 +713,13 @@ export function ProjectsSection() {
                             className="w-full px-3 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-between transition-all duration-300 hover:border-cyan-400"
                           >
                             <span className="text-white">{formData.period}</span>
-                            <ChevronDown className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isPeriodOpen ? "rotate-180" : ""}`} />
+                            <ChevronDown
+                              className={`h-4 w-4 text-cyan-400 transition-transform duration-300 ${isPeriodOpen ? "rotate-180" : ""}`}
+                            />
                           </div>
                           {isPeriodOpen && (
                             <div className="absolute z-20 w-full mt-2 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
-                              {periodOptions.map((option) => (
+                              {periodOptions.map(option => (
                                 <div
                                   key={option.value}
                                   onClick={() => {
@@ -656,7 +727,9 @@ export function ProjectsSection() {
                                     setIsPeriodOpen(false);
                                   }}
                                   className={`px-4 py-2 cursor-pointer transition-all duration-200 hover:bg-cyan-500/10 text-center ${
-                                    formData.period === option.value ? "bg-cyan-500/10 text-cyan-400" : "text-white"
+                                    formData.period === option.value
+                                      ? "bg-cyan-500/10 text-cyan-400"
+                                      : "text-white"
                                   }`}
                                 >
                                   {option.label}
@@ -680,11 +753,20 @@ export function ProjectsSection() {
                         rows={4}
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 resize-none"
+                        disabled={isSubmitting}
+                        className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Tell us about your project, goals, and requirements..."
                       />
                     </div>
                   </div>
+
+                  {/* Error Message */}
+                  {error && (
+                    <div className="flex items-center gap-2 text-red-500 bg-red-500/10 rounded-lg p-3 text-sm border border-red-500/30">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                  )}
 
                   <button
                     type="submit"
@@ -724,83 +806,83 @@ export function ProjectsSection() {
             transform: translateY(0);
           }
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
         }
-        
+
         /* Modern Date Picker Styling */
         input[type="date"] {
           color-scheme: dark;
         }
-        
+
         input[type="date"]::-webkit-calendar-picker-indicator {
           filter: invert(0.6) sepia(1) hue-rotate(160deg) brightness(1.2);
           cursor: pointer;
           opacity: 0.7;
           transition: all 0.2s ease;
         }
-        
+
         input[type="date"]::-webkit-calendar-picker-indicator:hover {
           opacity: 1;
           transform: scale(1.1);
         }
-        
+
         /* Dark theme for native date picker popup */
         ::-webkit-datetime-edit {
           color: white;
         }
-        
+
         ::-webkit-datetime-edit-fields-wrapper {
           color: white;
         }
-        
+
         ::-webkit-datetime-edit-text {
           color: #06b6d4;
         }
-        
+
         ::-webkit-datetime-edit-month-field:hover,
         ::-webkit-datetime-edit-day-field:hover,
         ::-webkit-datetime-edit-year-field:hover {
           background-color: rgba(6, 182, 212, 0.2);
           border-radius: 4px;
         }
-        
+
         /* Custom scrollbar */
         .overflow-y-auto::-webkit-scrollbar {
           width: 6px;
         }
-        
+
         .overflow-y-auto::-webkit-scrollbar-track {
           background: #0d1117;
           border-radius: 10px;
         }
-        
+
         .overflow-y-auto::-webkit-scrollbar-thumb {
           background: #06b6d4;
           border-radius: 10px;
           transition: all 0.2s ease;
         }
-        
+
         .overflow-y-auto::-webkit-scrollbar-thumb:hover {
           background: #0891b2;
         }
-        
+
         /* Custom scrollbar for dropdowns */
         .overflow-y-auto.custom-scroll {
           scrollbar-width: thin;
           scrollbar-color: #06b6d4 #1a1f2e;
         }
-        
+
         .overflow-y-auto.custom-scroll::-webkit-scrollbar {
           width: 4px;
         }
-        
+
         .overflow-y-auto.custom-scroll::-webkit-scrollbar-track {
           background: #1a1f2e;
           border-radius: 10px;
         }
-        
+
         .overflow-y-auto.custom-scroll::-webkit-scrollbar-thumb {
           background: #06b6d4;
           border-radius: 10px;
