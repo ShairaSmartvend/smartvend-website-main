@@ -273,25 +273,25 @@ export function ProjectsSection() {
 
   const processSteps = [
     {
-      num: "01",
+      // num: "01",
       title: "Discovery",
       desc: "We learn about your vision and requirements in detail",
       icon: Lightbulb,
     },
     {
-      num: "02",
+      // num: "02",
       title: "Strategy",
       desc: "We create a detailed roadmap and timeline for success",
       icon: Target,
     },
     {
-      num: "03",
+      // num: "03",
       title: "Development",
       desc: "We build with agility, transparency, and excellence",
       icon: Rocket,
     },
     {
-      num: "04",
+      // num: "04",
       title: "Launch",
       desc: "We deploy and support your growth and success",
       icon: Trophy,
@@ -566,7 +566,7 @@ export function ProjectsSection() {
                         <Code2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 z-10" />
                         <div
                           onClick={() => setIsProjectTypeOpen(!isProjectTypeOpen)}
-                          className="w-full pl-20 pr-10 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-between transition-all duration-300 hover:border-cyan-400"
+                          className="w-full pl-10 pr-10 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-between transition-all duration-300 hover:border-cyan-400"
                         >
                           <span className={formData.projectType ? "text-white" : "text-gray-400"}>
                             {formData.projectType
@@ -625,7 +625,7 @@ export function ProjectsSection() {
                           onChange={handleInputChange}
                           className="w-full px-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 pointer-events-none" />
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cyan-400 pointer-events-none" />
                       </div>
                     </div>
                     <div>
@@ -638,7 +638,7 @@ export function ProjectsSection() {
                           <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 z-10" />
                           <div
                             onClick={() => setIsHourOpen(!isHourOpen)}
-                            className="w-full pl-15 pr-8 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-start gap-3 transition-all duration-300 hover:border-cyan-400"
+                            className="w-full pl-10 pr-8 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white cursor-pointer flex items-center justify-start gap-4 transition-all duration-300 hover:border-cyan-400"
                           >
                             <span className={formData.hour ? "text-white" : "text-gray-400"}>
                               {formData.hour || "Hour"}
@@ -817,7 +817,11 @@ export function ProjectsSection() {
         }
 
         input[type="date"]::-webkit-calendar-picker-indicator {
-          filter: invert(0.6) sepia(1) hue-rotate(160deg) brightness(1.2);
+          opacity: 0;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
           cursor: pointer;
           opacity: 0.7;
           transition: all 0.2s ease;

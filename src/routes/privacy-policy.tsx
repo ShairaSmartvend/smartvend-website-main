@@ -58,71 +58,34 @@ function PrivacyPolicyComponent() {
               </span>{" "}
               Policy
             </h1>
-            <p className="text-gray-400 text-lg">Last updated: January 2025</p>
+            <p className="text-gray-400 text-lg">Last updated: May 2026</p>
           </div>
 
           {/* Content Sections */}
           <div className="space-y-12">
             {/* Introduction */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Introduction</h2>
-              <p className="text-gray-400 leading-relaxed mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt luctus, nunc nisl aliquam nunc, eget aliquam nisl nunc vel nisl. Curabitur vitae lorem at elit fermentum facilisis. Integer ac nisl nec libero malesuada tincidunt. Donec vel justo sed sapien volutpat tristique. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla facilisi.
-
-              </p>
+              <h2 className="text-2xl font-bold text-white mb-4">Privacy Policy</h2>
               <p className="text-gray-400 leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt luctus, nunc nisl aliquam nunc, eget aliquam nisl nunc vel nisl. Curabitur vitae lorem at elit fermentum facilisis. Integer ac nisl nec libero malesuada tincidunt. Donec vel justo sed sapien volutpat tristique. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla facilisi.
-
+                Smartvend System Corporation values and respects your privacy. This Privacy Policy
+                explains how personal information is collected, used, and protected when using this
+                website.
               </p>
             </section>
 
             {/* Information We Collect */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
               <h2 className="text-2xl font-bold text-white mb-6">Information We Collect</h2>
-              <div className="space-y-6">
-                <div className="border-l-2 border-cyan-400 pl-4">
-                  <h3 className="text-lg font-semibold text-cyan-400 mb-2">Personal Information</h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    We collect information you voluntarily provide to us when you interact with our
-                    services, such as your name, email address, phone number, company name, and any
-                    other information you choose to provide during consultation bookings or
-                    inquiries.
-                  </p>
-                </div>
-                <div className="border-l-2 border-cyan-400 pl-4">
-                  <h3 className="text-lg font-semibold text-cyan-400 mb-2">
-                    Automatically Collected Information
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Vestibulum id ligula porta felis euismod semper. Donec ullamcorper nulla non metus auctor fringilla.
-
-                  </p>
-                </div>
-                <div className="border-l-2 border-cyan-400 pl-4">
-                  <h3 className="text-lg font-semibold text-cyan-400 mb-2">
-                    Cookies and Tracking Technologies
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    We use cookies and similar tracking technologies to enhance your browsing
-                    experience, remember your preferences, and gather analytics about how you use
-                    our website. You can control cookie preferences through your browser settings.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* How We Use Information */}
-            <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-6">How We Use Your Information</h2>
+              <p className="text-gray-400 leading-relaxed mb-4">
+                The company may collect personal information such as:
+              </p>
               <ul className="space-y-3">
                 {[
-                  "To provide, maintain, and improve our services and respond to your inquiries",
-                  "To process consultation requests and provide you with relevant information",
-                  "To send you promotional materials, newsletters, and updates (with your consent)",
-                  "To analyze website usage patterns and optimize user experience",
-                  "To comply with legal obligations and enforce our terms and conditions",
-                  "To protect against fraud, security threats, and unauthorized access",
-                  "To communicate with you about changes to our services or policies",
+                  "Full Name",
+                  "Email Address",
+                  "Contact Number",
+                  "Business or inquiry details",
+                  "Other information voluntarily submitted through forms or emails",
                 ].map((item, idx) => (
                   <li key={idx} className="flex gap-3 text-gray-400">
                     <span className="text-cyan-400 font-bold flex-shrink-0">•</span>
@@ -132,19 +95,18 @@ function PrivacyPolicyComponent() {
               </ul>
             </section>
 
-            {/* Information Sharing */}
+            {/* Use of Information */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Information Sharing</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">Use of Information</h2>
               <p className="text-gray-400 leading-relaxed mb-4">
-                We do not sell, trade, or rent your personal information to third parties. However,
-                we may share your information with:
+                Collected information may be used for:
               </p>
-              <ul className="space-y-3 mb-4">
+              <ul className="space-y-3">
                 {[
-                  "Service providers who assist us in operating our website and conducting our business",
-                  "Business partners for joint marketing initiatives or services (with your consent)",
-                  "Law enforcement or governmental agencies when required by law",
-                  "Other parties in connection with company transactions or when necessary to protect our rights",
+                  "Responding to inquiries and requests",
+                  "Providing company services and support",
+                  "Improving website functionality and user experience",
+                  "Internal business and operational purposes",
                 ].map((item, idx) => (
                   <li key={idx} className="flex gap-3 text-gray-400">
                     <span className="text-cyan-400 font-bold flex-shrink-0">•</span>
@@ -154,79 +116,48 @@ function PrivacyPolicyComponent() {
               </ul>
             </section>
 
-            {/* Data Security */}
+            {/* Data Protection */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Data Security</h2>
-              <p className="text-gray-400 leading-relaxed mb-4">
-                We implement industry-standard security measures to protect your personal
-                information from unauthorized access, alteration, disclosure, or destruction. These
-                measures include encryption, secure server infrastructure, and restricted access
-                controls.
-              </p>
+              <h2 className="text-2xl font-bold text-white mb-4">Data Protection</h2>
               <p className="text-gray-400 leading-relaxed">
-                However, no method of transmission over the internet is completely secure. While we
-                strive to protect your information, we cannot guarantee absolute security. You
-                acknowledge the inherent risks of transmitting information online.
+                Smartvend System Corporation implements reasonable security measures to help protect
+                personal information from unauthorized access, misuse, or disclosure.
               </p>
             </section>
 
-            {/* Your Rights and Choices */}
+            {/* Sharing of Information */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-6">Your Rights and Choices</h2>
-              <p className="text-gray-400 leading-relaxed mb-6">
-                You have the following rights regarding your personal information:
-              </p>
-              <div className="space-y-4">
-                {[
-                  {
-                    title: "Access",
-                    desc: "Request access to the personal information we have collected about you",
-                  },
-                  {
-                    title: "Correction",
-                    desc: "Request correction of any inaccurate or incomplete information",
-                  },
-                  {
-                    title: "Deletion",
-                    desc: "Request deletion of your personal information, subject to certain exceptions",
-                  },
-                  {
-                    title: "Opt-Out",
-                    desc: "Opt out of receiving marketing communications from us at any time",
-                  },
-                  {
-                    title: "Portability",
-                    desc: "Request a copy of your information in a portable format",
-                  },
-                ].map((item, idx) => (
-                  <div key={idx} className="border-l-2 border-blue-400 pl-4">
-                    <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                    <p className="text-gray-400 text-sm">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Retention */}
-            <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Data Retention</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Sharing of Information</h2>
               <p className="text-gray-400 leading-relaxed">
-                We retain your personal information for as long as necessary to fulfill the purposes
-                outlined in this Privacy Policy, unless a longer retention period is required or
-                permitted by law. When information is no longer needed, we securely delete or
-                anonymize it. If you request deletion of your data, we will comply within the
-                timeframe required by applicable law.
+                Personal information will not be sold or shared with third parties except when
+                required by law or necessary for legitimate business operations.
               </p>
             </section>
 
-            {/* Children's Privacy */}
+            {/* Cookies and Website Data */}
             <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Children's Privacy</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Cookies and Website Data</h2>
               <p className="text-gray-400 leading-relaxed">
-                Our services are not intended for children under the age of 13. We do not knowingly
-                collect personal information from children under 13. If we become aware that we have
-                collected information from a child under 13, we will take steps to delete such
-                information and terminate the child's account.
+                The website may use cookies or analytics tools to improve website performance and
+                user experience.
+              </p>
+            </section>
+
+            {/* User Rights */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-4">User Rights</h2>
+              <p className="text-gray-400 leading-relaxed">
+                Users may request correction or removal of their personal information by contacting
+                the company directly.
+              </p>
+            </section>
+
+            {/* Policy Updates */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-4">Policy Updates</h2>
+              <p className="text-gray-400 leading-relaxed">
+                This Privacy Policy may be updated periodically without prior notice. Continued use
+                of the website signifies acceptance of the updated policy.
               </p>
             </section>
 
@@ -240,24 +171,13 @@ function PrivacyPolicyComponent() {
               <div className="space-y-2 text-gray-400">
                 <p>
                   <span className="text-cyan-400 font-semibold">Email:</span>{" "}
-                  smartvendsystem@smartvend.ph
+                  smartvendsystem@gmail.com
                 </p>
                 <p>
                   <span className="text-cyan-400 font-semibold">Company:</span> SmartVend System
                   Corporation
                 </p>
               </div>
-            </section>
-            {/* Changes to Policy */}
-            <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Changes to This Privacy Policy</h2>
-              <p className="text-gray-400 leading-relaxed">
-                We may update this Privacy Policy from time to time to reflect changes in our
-                practices, technology, legal requirements, or other factors. We will notify you of
-                any material changes by updating the "Last Updated" date at the top of this policy.
-                Your continued use of our services following the posting of changes constitutes your
-                acceptance of those changes.
-              </p>
             </section>
           </div>
         </div>

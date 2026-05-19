@@ -237,7 +237,7 @@ export function Contact() {
 
                 <div className="relative">
                   <label className="block text-sm font-semibold text-muted-foreground mb-2">
-                    Phone Number (Max 12 digits)
+                    Phone Number 
                   </label>
                   <div className="relative">
                     {focusedField === "phone" && (
@@ -251,7 +251,7 @@ export function Contact() {
                       onFocus={() => handleFocus("phone")}
                       onBlur={handleBlur}
                       disabled={isLoading}
-                      placeholder="09123456789"
+                      placeholder="+63 (9) 123456789"
                       className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
