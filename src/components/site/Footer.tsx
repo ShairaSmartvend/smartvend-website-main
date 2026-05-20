@@ -75,7 +75,7 @@ export function Footer() {
                       aria-label={social.label}
                       className={`h-10 w-10 grid place-items-center rounded-lg glass glow-hover transition-all duration-300 hover:scale-110 ${social.color}`}
                     >
-                      <Icon className={`h-4 w-4 ${social.textColor || "text-blue-600"}`} />
+                      <Icon className={`h-4 w-4 ${social.textColor || "text-sky-600"}`} />
                     </a>
                   );
                 })}
@@ -91,7 +91,7 @@ export function Footer() {
                 <li key={l.href}>
                   <a
                     href={l.href}
-                    className="hover:text-primary transition-colors duration-300 hover:pl-1"
+                    className="hover:text-primary transition-colors duration-300 hover:underline pl-1"
                   >
                     {l.label}
                   </a>
@@ -110,7 +110,7 @@ export function Footer() {
                   <li key={i}>
                     <a
                       href={link.href}
-                      className="flex items-center gap-2 hover:text-primary transition-colors duration-300 hover:pl-1"
+                      className="flex items-center gap-2 hover:text-primary transition-colors duration-300 hover:underline pl-1"
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {link.label}
@@ -124,12 +124,7 @@ export function Footer() {
             <div className="mt-6 pt-4 border-t border-white/10">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
-                <a
-                  href="mailto:smartvendsystem@gmail.com"
-                  className="hover:text-primary transition-colors"
-                >
-                  smartvendsystem@smartvend.ph
-                </a>
+                <a className="hover:text-primary transition-colors">smartvendsystem@smartvend.ph</a>
               </div>
             </div>
           </div>

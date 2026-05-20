@@ -79,7 +79,7 @@ export function Contact() {
     // Phone number validation: numbers only, max 12 characters
     if (name === "phone") {
       const numbersOnly = value.replace(/[^0-9]/g, "");
-      if (numbersOnly.length <= 12) {
+      if (numbersOnly.length <= 11) {
         setFormData({ ...formData, [name]: numbersOnly });
       }
     } else {
@@ -112,21 +112,21 @@ export function Contact() {
                 icon: Phone,
                 label: "Phone",
                 value: "+63 (9) 171 802 216",
-                href: "tel:+639171802216",
-                detail: "Mon-Fri, 9AM - 6PM",
+
+                detail: "Monday - Friday, 9AM - 5PM",
               },
               {
                 icon: Mail,
                 label: "Email",
                 value: "smartvendsystem@gmail.com",
-                href: "mailto:smartvendsystem@gmail.com",
+
                 detail: "24/7 Support",
               },
               {
                 icon: MapPin,
                 label: "Office",
                 value: "Unit 211 Jocfer Building, Commonwealth Ave. Quezon City",
-                href: "https://maps.google.com/?q=Unit+211+Jocfer+Building+Commonwealth+Ave+Quezon+City",
+                href: "M3FH+4MJ JOCFER Building, Commonwealth Ave, Quezon City, 1127 Metro Manila",
                 detail: "Metro Manila, Philippines",
               },
             ].map((c, idx) => (
@@ -138,7 +138,7 @@ export function Contact() {
                 className="group relative block overflow-hidden rounded-2xl border border-cyan-400/30 bg-card/90 transition-all duration-300 hover:border-cyan-400/60 hover:shadow-lg hover:shadow-cyan-500/10"
               >
                 {/* Moving highlight effect */}
-                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full group-active:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent" />
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full group-active:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-cyan-400/10 to-transparent" />
 
                 {/* Click ripple effect */}
                 <div className="absolute inset-0 bg-cyan-400/0 transition-all duration-300 group-active:bg-cyan-400/5" />
@@ -167,7 +167,7 @@ export function Contact() {
           <div className="w-full rounded-2xl overflow-hidden shadow-lg mt-6">
             <iframe
               title="SmartVend Office Location"
-              className="w-full h-96 md:h-[400px] transition-all duration-700"
+              className="w-full h-96 md:h-100 transition-all duration-700"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.042187804405!2d121.074789!3d14.706762!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b06e5b3f2b6d%3A0x2c5c3f8e9a1b2c3d!2sJocfer%20Building%2C%20Commonwealth%20Ave%2C%20Quezon%20City%2C%20Metro%20Manila!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph"
               allowFullScreen
               loading="lazy"
@@ -195,7 +195,7 @@ export function Contact() {
                     </label>
                     <div className="relative">
                       {focusedField === "name" && (
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/40 to-blue-900/60 rounded-lg blur-md" />
+                        <div className="absolute -inset-0.5 bg-linear-to-r from-primary/40 to-primary/70 rounded-lg blur-md" />
                       )}
                       <input
                         type="text"
@@ -217,7 +217,7 @@ export function Contact() {
                     </label>
                     <div className="relative">
                       {focusedField === "email" && (
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-lg blur-md" />
+                        <div className="absolute -inset-0.5 bg-linear-to-r from-primary/40 to-primary/70 rounded-lg blur-md" />
                       )}
                       <input
                         type="email"
@@ -237,11 +237,11 @@ export function Contact() {
 
                 <div className="relative">
                   <label className="block text-sm font-semibold text-muted-foreground mb-2">
-                    Phone Number 
+                    Phone Number
                   </label>
                   <div className="relative">
                     {focusedField === "phone" && (
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-lg blur-md" />
+                      <div className="absolute -inset-0.5 bg-linear-to-r from-primary/40 to-primary/70 rounded-lg blur-md" />
                     )}
                     <input
                       type="tel"
@@ -251,7 +251,7 @@ export function Contact() {
                       onFocus={() => handleFocus("phone")}
                       onBlur={handleBlur}
                       disabled={isLoading}
-                      placeholder="+63 (9) 123456789"
+                      placeholder="0912 345 6789"
                       className="relative w-full rounded-lg border border-cyan-400/30 bg-background/80 px-4 py-3 outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
@@ -263,7 +263,7 @@ export function Contact() {
                   </label>
                   <div className="relative">
                     {focusedField === "message" && (
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-lg blur-md" />
+                      <div className="absolute -inset-0.5 bg-linear-to-r from-primary/40 to-primary/70 rounded-lg blur-md" />
                     )}
                     <textarea
                       required
@@ -285,7 +285,7 @@ export function Contact() {
                 {/* Error Message */}
                 {error && (
                   <div className="flex items-center gap-2 text-red-500 bg-red-500/10 rounded-lg p-3 text-sm border border-red-500/30">
-                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
@@ -297,10 +297,10 @@ export function Contact() {
                     disabled={isLoading}
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
-                    className="relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                    className="relative w-full overflow-hidden rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none hover:cursor-pointer"
                   >
                     {/* Subtle shine effect on hover */}
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
                     <div className="relative flex items-center justify-center gap-2">
                       {sent ? (
@@ -330,7 +330,7 @@ export function Contact() {
                 {/* Success Message Toast */}
                 {sent && (
                   <div className="fixed bottom-8 right-8 z-50 animate-slide-up">
-                    <div className="bg-gradient-to-r from-cyan-600 to-blue-700 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3">
+                    <div className="bg-linear-to-r from-cyan-600 to-blue-700 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3">
                       <CheckCircle2 className="h-5 w-5" />
                       <div>
                         <p className="font-semibold">Thanks for contacting us! </p>

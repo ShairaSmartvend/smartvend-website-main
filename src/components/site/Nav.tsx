@@ -113,7 +113,7 @@ export function Nav() {
               <img src={logoSVSC} className="h-13 w-13 object-contain relative z-10" />
             </span>
 
-            <div className="leading-tight">
+            <div className="leading-tight cursor-text">
               <div className="font-display font-bold tracking-tight text-base sm:text-lg">
                 SMARTVEND
               </div>

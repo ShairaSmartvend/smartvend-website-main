@@ -50,7 +50,7 @@ export function About() {
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-600/40 to-indigo-500/30 rounded-full blur-xl opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500" />
             {/* Click ripple effect */}
             <div className="absolute inset-0 rounded-2xl bg-blue-500/0 transition-all duration-300 group-active:bg-blue-500/10" />
-            <div className="relative z-10">
+            <div className="relative z-10 cursor-default">
               <div className="inline-flex p-3 rounded-xl bg-primary/20 border border-primary/40 group-hover:bg-primary/30 group-hover:border-primary/60 transition-all duration-300">
                 <Target className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
@@ -87,7 +87,7 @@ export function About() {
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-600/40 to-indigo-500/30 rounded-full blur-xl opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500" />
             {/* Click ripple effect */}
             <div className="absolute inset-0 rounded-2xl bg-blue-500/0 transition-all duration-300 group-active:bg-blue-500/10" />
-            <div className="relative z-10">
+            <div className="relative z-10 cursor-default">
               <div className="inline-flex p-3 rounded-xl bg-primary/20 border border-primary/40 group-hover:bg-primary/30 group-hover:border-primary/60 transition-all duration-300">
                 <Eye className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
               </div>

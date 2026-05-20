@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
-export function ProjectsSection() {
+export function BuildWithUs() {
   const titleRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedProjectType, setSelectedProjectType] = useState("");
@@ -52,6 +52,12 @@ export function ProjectsSection() {
   const hourRef = useRef(null);
   const minuteRef = useRef(null);
   const periodRef = useRef(null);
+  const dateRef = useRef<HTMLInputElement | null>(null);
+
+  const openDatePicker = () => {
+    dateRef.current?.focus();
+    (dateRef.current as HTMLInputElement & { showPicker?: () => void })?.showPicker?.();
+  };
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -133,7 +139,9 @@ export function ProjectsSection() {
     setIsSubmitting(true);
 
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const templateId =
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID_BUILDWITHUS ||
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 
     if (!serviceId || !templateId) {
       setError("Email service not configured. Please contact support.");
@@ -141,14 +149,19 @@ export function ProjectsSection() {
       return;
     }
 
+    const selectedTypeLabel =
+      projectOptions.find(option => option.value === formData.projectType)?.label ||
+      "Not specified";
+
     const templateParams = {
       from_name: formData.name,
       from_email: formData.email,
       from_phone: formData.phone,
       to_name: "Smartvend",
-      project_type: formData.projectType,
-      consultation_date: formData.date,
-      consultation_time: `${formData.hour}:${formData.minute} ${formData.period}`,
+      subject: "Build With Us Consultation Request",
+      project_type: selectedTypeLabel,
+      preferred_date: formData.date,
+      preferred_time: `${formData.hour}:${formData.minute} ${formData.period}`,
       message: formData.message,
       time: new Date().toLocaleString(),
     };
@@ -339,7 +352,7 @@ export function ProjectsSection() {
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/50 to-blue-600/50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition duration-500" />
             <button
               onClick={() => handleOpenModal("")}
-              className="relative inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:gap-4 hover:shadow-xl hover:scale-105 overflow-hidden"
+              className="relative inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:gap-4 hover:shadow-xl hover:scale-105 overflow-hidden hover:cursor-pointer "
             >
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               <Calendar className="h-5 w-5" />
@@ -383,7 +396,7 @@ export function ProjectsSection() {
                   </p>
                   <button
                     onClick={() => handleOpenModal(project.id)}
-                    className={`inline-flex items-center gap-2 rounded-lg bg-gradient-to-r ${project.gradient} px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:gap-3 hover:shadow-xl group-hover:translate-x-1`}
+                    className={`inline-flex items-center gap-2 rounded-lg bg-gradient-to-r ${project.gradient} px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:gap-3 hover:shadow-xl group-hover:translate-x-1 hover:cursor-pointer `}
                   >
                     Get Started{" "}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -616,6 +629,7 @@ export function ProjectsSection() {
                       </label>
                       <div className="relative">
                         <input
+                          ref={dateRef}
                           type="date"
                           name="date"
                           required
@@ -623,9 +637,13 @@ export function ProjectsSection() {
                           min={today}
                           value={formData.date}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="custom-date-input w-full px-4 py-3 pr-10 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cyan-400 pointer-events-none" />
+
+                        <Calendar
+                          onClick={openDatePicker}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 cursor-pointer"
+                        />
                       </div>
                     </div>
                     <div>
@@ -795,7 +813,7 @@ export function ProjectsSection() {
         </div>
       )}
 
-      <style jsx global>{`
+      <style>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -830,6 +848,7 @@ export function ProjectsSection() {
         input[type="date"]::-webkit-calendar-picker-indicator:hover {
           opacity: 1;
           transform: scale(1.1);
+          absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 pointer-events-none
         }
 
         /* Dark theme for native date picker popup */

@@ -33,12 +33,12 @@ export function Services() {
       desc: "Clean and intuitive designs focused on creating better experiences for users across all devices.",
       points: ["Wireframing", "Modern Interfaces", "User Experience"],
     },
-    {
-      icon: Cloud,
-      title: "Cloud Solutions",
-      desc: "Cloud hosting, deployment, and scalable infrastructure solutions for modern applications and systems.",
-      points: ["Cloud Hosting", "Deployment", "Scalable Infrastructure"],
-    },
+    // {
+    //   icon: Cloud,
+    //   title: "Cloud Solutions",
+    //   desc: "Cloud hosting, deployment, and scalable infrastructure solutions for modern applications and systems.",
+    //   points: ["Cloud Hosting", "Deployment", "Scalable Infrastructure"],
+    // },
     {
       icon: Cpu,
       title: "API Development",

@@ -185,6 +185,60 @@
     box-shadow: 0 10px 40px color-mix(in oklab, var(--primary) 40%, transparent);
     border-color: color-mix(in oklab, var(--primary) 70%, transparent);
   }
+
+  .shiny-button {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(56, 229, 255, 0.35);
+    background: transparent;
+    text-shadow: 0 0 12px rgba(56, 229, 255, 0.4);
+  }
+  .shiny-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -140%;
+    width: 130%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 40%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0.45) 60%, transparent 100%);
+    transform: skewX(-25deg);
+    opacity: 0;
+    animation: none;
+  }
+  
+  .shiny-button::before {
+    animation: shine-sweep 2s linear infinite;
+  }
+
+  /* .group:hover .shiny-button::before,
+  .shiny-button:hover::before {
+    animation: shine-sweep 2s linear infinite;
+  } */
+
+  .group:hover .shiny-button,
+  .shiny-button:hover {
+    border-color: rgba(56, 229, 255, 0.6);
+  }
+  @keyframes shine-sweep {
+    0% {
+      transform: translateX(-140%) skewX(-25deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.2;
+    }
+    30% {
+      transform: translateX(260%) skewX(-25deg);
+      opacity: 0.8;
+    }
+    45% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(260%) skewX(-25deg);
+      opacity: 0;
+    }
+  }
 }
 
 .perspective-1000 {
@@ -345,4 +399,9 @@
 }
 .group:hover .icon-float {
   transform: translateY(-8px) rotate(-5deg);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
 }

@@ -74,12 +74,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "SMARTVEND SYSTEM CORPORATION" },
       { name: "description", content: "SMARTVEND SYSTEM CORPORATION" },
-      { name: "author", content: "Smartvend" },
-      { property: "og:title", content: "SMARTVEND SYSTEM CORPORATION." },
+      { name: "author", content: "SMARTVEND SYSTEM CORPORATION" },
+      { property: "og:title", content: "SMARTVEND SYSTEM CORPORATION" },
       { property: "og:description", content: "SMARTVEND SYSTEM CORPORATION" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Smartvend" },
     ],
     links: [
       {

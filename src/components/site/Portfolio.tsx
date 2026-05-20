@@ -27,10 +27,12 @@ export function Portfolio() {
       name: "CleanIt",
       body: "CleanIt makes home cleaning effortless by connecting you with trusted, professional cleaners through a simple and secure mobile app.",
       features: ["Booking System", "Field Dispatch", "Real-time Updates", "Verified Cleaners"],
-      link: "https://cleanit.business/",
+
+      link: "https://play.google.com/store/apps/details?id=com.cleanit.activities",
       linkText: "Download on Android",
-      // link: "https://cleanit.business/",
-      // linkText: "Download on iOs",
+
+      link2: "https://apps.apple.com/ph/app/clean-it/id6760164466",
+      linkText2: "Download on iOS",
     },
     {
       img: cleanitweb,
@@ -120,23 +122,47 @@ export function Portfolio() {
                 ))}
               </div>
 
-              {/* Conditional Link */}
-              {project.link ? (
-                <a
-                  href={project.link}
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all duration-300"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {project.linkText} <ArrowRight className="h-4 w-4" />
-                </a>
-              ) : (
-                <div className="mt-5">
-                  <span className="inline-flex items-center gap-2 text-xs text-muted-foreground/50">
-                    {/* Coming soon - placeholder for future projects */}
-                  </span>
-                </div>
-              )}
+              {/* Buttons */}
+              <div className="mt-5 flex flex-wrap gap-3">
+                {project.link && (
+                  <a
+                    href={project.link}
+                    className={`inline-flex items-center gap-2 text-sm font-semibold transition-all duration-300 hover:text-primary ${
+                      project.linkText === "Download on Android" ||
+                      (project.linkText === "Learn More" && project.name === "CleanIt Website")
+                        ? "shiny-button rounded-full px-4 py-3 text-white"
+                        : "text-primary group-hover:gap-3"
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="relative z-10">{project.linkText}</span>
+
+                    <ArrowRight className="relative z-10 h-4 w-4" />
+                  </a>
+                )}
+
+                {project.link2 && (
+                  <a
+                    href={project.link2}
+                    className="shiny-button rounded-full px-4 py-3 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-primary transition-all duration-300"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="relative z-10">{project.linkText2}</span>
+
+                    <ArrowRight className="relative z-10 h-4 w-4" />
+                  </a>
+                )}
+
+                {!project.link && !project.link2 && (
+                  <div>
+                    <span className="inline-flex items-center gap-2 text-xs text-muted-foreground/50">
+                      {/* Coming soon */}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}

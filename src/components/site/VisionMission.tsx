@@ -1,5 +1,5 @@
 import { Eye, Target } from "lucide-react";
-import { Section } from "./Section";
+import { Section } from "../components/site/Section";
 
 export function VisionMission() {
   return (
