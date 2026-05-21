@@ -15,7 +15,6 @@ export function Contact() {
     phone: "",
     message: "",
   });
-
   // Initialize EmailJS once on component mount
   useEffect(() => {
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -113,21 +112,21 @@ export function Contact() {
                 icon: Phone,
                 label: "Phone",
                 value: "+63 (9) 171 802 216",
-
+                href: "tel:+639171802216",
                 detail: "Monday - Friday, 9AM - 5PM",
               },
               {
                 icon: Mail,
                 label: "Email",
                 value: "smartvendsystem@gmail.com",
-
+                href: "mailto:smartvendsystem@gmail.com",
                 detail: "24/7 Support",
               },
               {
                 icon: MapPin,
                 label: "Office",
                 value: "Unit 211 Jocfer Building, Commonwealth Ave. Quezon City",
-                href: "M3FH+4MJ JOCFER Building, Commonwealth Ave, Quezon City, 1127 Metro Manila",
+                href: "https://www.google.com/maps/search/Jocfer+Building/@14.672824,121.076996,17z",
                 detail: "Metro Manila, Philippines",
               },
             ].map((c, idx) => (
@@ -168,8 +167,8 @@ export function Contact() {
           <div className="w-full rounded-2xl overflow-hidden shadow-lg mt-6">
             <iframe
               title="SmartVend Office Location"
-              className="w-full h-96 md:h-100 transition-all duration-700"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.042187804405!2d121.074789!3d14.706762!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b06e5b3f2b6d%3A0x2c5c3f8e9a1b2c3d!2sJocfer%20Building%2C%20Commonwealth%20Ave%2C%20Quezon%20City%2C%20Metro%20Manila!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph"
+              className="w-full h-96 md:h-96 transition-all duration-700"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1926.8134253856176!2d121.0769961424699!3d14.672824055072091!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b74afcf4461b%3A0x318f1a6946597505!2sJOCFER%20Building!5e0!3m2!1sen!2sph!4v1779330533550!5m2!1sen!2sph"
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

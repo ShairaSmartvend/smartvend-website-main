@@ -480,7 +480,8 @@ export function BuildWithUs() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="relative bg-gradient-to-br from-[#0d1117] to-[#0a0a0f] rounded-2xl border border-white/10 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="sticky top-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-b border-white/10 p-6">
+            <div className="sticky top-0 z-30 bg-[#0d1117] border-b border-white/10 p-6 backdrop-blur-md">
+              {" "}
               <button
                 onClick={() => setShowModal(false)}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"

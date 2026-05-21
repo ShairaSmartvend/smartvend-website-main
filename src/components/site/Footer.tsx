@@ -1,14 +1,4 @@
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  Facebook,
-  Mail,
-  MapPin,
-  FileText,
-  Shield,
-  Scale,
-} from "lucide-react";
+import { Github, Linkedin, Twitter, Facebook, Mail, FileText, Shield } from "lucide-react";
 import logoSVSC from "@/assets/logo-svsc-main.png";
 
 const links = [
@@ -34,64 +24,66 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="relative border-t border-primary/20 mt-20">
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+      {/* Shining line effect at the top */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-5 py-14">
-        {/* Main Footer Grid */}
-        <div className="grid gap-10 md:grid-cols-3">
-          {/* Brand Section */}
-          <div className="space-y-4">
+      {/* Shine animation keyframes for logo */}
+      <style>{`
+        @keyframes shine {
+          0% { transform: translateX(-100%) skewX(-20deg); }
+          100% { transform: translateX(200%) skewX(-20deg); }
+        }
+        .animate-shine {
+          animation: shine 2.5s infinite linear;
+        }
+      `}</style>
+
+      <div className="mx-auto max-w-7xl px-6 py-14">
+        {/* Balanced grid – increased gap to separate columns evenly */}
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-14 lg:gap-y-8">
+          {/* Column 1 – Brand (with logo shine) */}
+          <div className="space-y-5">
             <div className="flex items-center gap-3">
-              <span className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-glow overflow-hidden">
-                {/* Automatic continuous diagonal shining effect */}
-                <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-blue-400/60 to-transparent skew-x-[-20deg]" />
+              <span className="relative flex h-13 w-13 items-center justify-center rounded-lg bg-white shadow-md overflow-hidden">
+                <div className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
                 <img
                   src={logoSVSC}
-                  className="h-13 w-13 object-contain relative z-10"
+                  className="h-12 w-12 object-contain relative z-10"
                   alt="SmartVend Logo"
                 />
               </span>
               <div>
                 <div className="font-display font-bold text-white">SMARTVEND</div>
-                <div className="text-[11px] tracking-[0.2em] text-muted-foreground">
+                <div className="text-[10px] tracking-[0.2em] text-muted-foreground">
                   SYSTEM CORPORATION
                 </div>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Smart digital solutions for modern businesses — built with purpose, designed for
               impact.
             </p>
-
-            {/* Social Icons - Below Brand Section */}
-            <div className="pt-2">
-              <div className="flex gap-3">
-                {socialLinks.map((social, i) => {
-                  const Icon = social.icon;
-                  return (
-                    <a
-                      key={i}
-                      href={social.href}
-                      aria-label={social.label}
-                      className={`h-10 w-10 grid place-items-center rounded-lg glass glow-hover transition-all duration-300 hover:scale-110 ${social.color}`}
-                    >
-                      <Icon className={`h-4 w-4 ${social.textColor || "text-sky-600"}`} />
-                    </a>
-                  );
-                })}
-              </div>
+            <div className="w-full border-t border-white/20"></div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Mail className="h-4 w-4 flex-shrink-0" />
+              <a
+                href="mailto:smartvendsystem@smartvend.ph"
+                className="hover:text-primary transition-colors"
+              >
+                smartvendsystem@smartvend.ph
+              </a>
             </div>
           </div>
 
-          {/* Quick Links Section */}
+          {/* Column 2 – Quick Links */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Quick Links</h4>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+            <h4 className="font-semibold text-white mb-5 text-base">Quick Links</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
               {links.map(l => (
                 <li key={l.href}>
                   <a
                     href={l.href}
-                    className="hover:text-primary transition-colors duration-300 hover:underline pl-1"
+                    className="hover:text-primary transition-colors duration-300 hover:underline"
                   >
                     {l.label}
                   </a>
@@ -100,17 +92,17 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal Section */}
+          {/* Column 3 – Legal */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+            <h4 className="font-semibold text-white mb-5 text-base">Legal</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
               {legalLinks.map((link, i) => {
                 const Icon = link.icon;
                 return (
                   <li key={i}>
                     <a
                       href={link.href}
-                      className="flex items-center gap-2 hover:text-primary transition-colors duration-300 hover:underline pl-1"
+                      className="flex items-center gap-2 hover:text-primary transition-colors duration-300 hover:underline"
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {link.label}
@@ -119,13 +111,28 @@ export function Footer() {
                 );
               })}
             </ul>
+          </div>
 
-            {/* Contact Info */}
-            <div className="mt-6 pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4" />
-                <a className="hover:text-primary transition-colors">smartvendsystem@smartvend.ph</a>
-              </div>
+          {/* Column 4 – Socials (original glass styling preserved) */}
+          <div>
+            <h4 className="font-semibold text-white mb-5 text-base">Follow Us</h4>
+            <p className="text-sm text-muted-foreground mb-5">
+              Connect with us on social media for updates and news.
+            </p>
+            <div className="flex gap-3">
+              {socialLinks.map((social, i) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={i}
+                    href={social.href}
+                    aria-label={social.label}
+                    className={`h-10 w-10 grid place-items-center rounded-lg glass glow-hover transition-all duration-300 hover:scale-110 ${social.color}`}
+                  >
+                    <Icon className="h-4 w-4 text-sky-600" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -133,7 +140,7 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-5 py-5 text-center text-xs text-muted-foreground">
+        <div className="mx-auto max-w-7xl px-6 py-5 text-center text-xs text-muted-foreground">
           © 2025 SMARTVEND SYSTEM CORPORATION. All Rights Reserved.
         </div>
       </div>
