@@ -98,6 +98,7 @@ export function Contact() {
   return (
     <Section
       id="contact"
+      className="pt-1.5 md:pt-2.5"
       eyebrow="Get in Touch"
       title="Let's build something smart together."
       subtitle="Reach out and our team will get back to you shortly."

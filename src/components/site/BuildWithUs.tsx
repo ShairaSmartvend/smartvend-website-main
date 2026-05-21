@@ -286,25 +286,25 @@ export function BuildWithUs() {
 
   const processSteps = [
     {
-      // num: "01",
+      num: "01",
       title: "Discovery",
       desc: "We learn about your vision and requirements in detail",
       icon: Lightbulb,
     },
     {
-      // num: "02",
+      num: "02",
       title: "Strategy",
       desc: "We create a detailed roadmap and timeline for success",
       icon: Target,
     },
     {
-      // num: "03",
+      num: "03",
       title: "Development",
       desc: "We build with agility, transparency, and excellence",
       icon: Rocket,
     },
     {
-      // num: "04",
+      num: "04",
       title: "Launch",
       desc: "We deploy and support your growth and success",
       icon: Trophy,
@@ -314,7 +314,7 @@ export function BuildWithUs() {
   return (
     <section
       id="projects"
-      className="relative py-28 px-5 overflow-hidden bg-gradient-to-br from-[#0a0a0f] via-[#0d1117] to-[#080e18] scroll-mt-20"
+      className="relative py-10 px-5 overflow-hidden bg-gradient-to-br from-[#0a0a0f] via-[#0d1117] to-[#080e18] scroll-mt-20"
     >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 -left-40 w-80 h-80 bg-blue-600/20 rounded-full blur-3xl animate-pulse" />
@@ -410,7 +410,7 @@ export function BuildWithUs() {
           })}
         </div>
 
-        <div className="mt-28">
+        <div className="mt-20">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/5 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-cyan-400 border border-cyan-400/30 mb-4">
               How We Work
