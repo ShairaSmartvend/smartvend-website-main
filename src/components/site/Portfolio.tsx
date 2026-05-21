@@ -25,8 +25,8 @@ export function Portfolio() {
       img: cleanitapp,
       tag: "Mobile App",
       name: "CleanIt",
-      body: "CleanIt makes home cleaning effortless by connecting you with trusted, professional cleaners through a simple and secure mobile app.",
-      features: ["Booking System", "Field Dispatch", "Real-time Updates", "Verified Cleaners"],
+      body: "CleanIt makes home services effortless by connecting you with trusted, professional service providers through a simple and secure mobile app.",
+      features: ["Booking System", "Field Dispatch", "Real-time Updates", "Verified Service Providers",],
 
       link: "https://play.google.com/store/apps/details?id=com.cleanit.activities",
       linkText: "Download on Android",
@@ -38,7 +38,7 @@ export function Portfolio() {
       img: cleanitweb,
       tag: "Website",
       name: "CleanIt Website",
-      body: "CleanIt is a modern informational website that presents professional home cleaning services and provides clear insights into the company's offerings and credibility.",
+      body: "CleanIt is a modern informational website that presents professional home services and provides clear insights into the company's offerings and credibility.",
       features: [
         "Service Information",
         "Company Profile",
@@ -52,10 +52,10 @@ export function Portfolio() {
       img: adminweb,
       tag: "Website",
       name: "CleanIt Admin Panel",
-      body: "CleanIt Admin Panel is a centralized management system designed to help administrators efficiently monitor bookings, manage cleaners, track services, and oversee overall platform operations in real time.",
+      body: "CleanIt Admin Panel is a centralized management system designed to help administrators efficiently monitor bookings, manage service providers, track services, and oversee overall platform operations in real time.",
       features: [
         "Booking Management",
-        "Cleaner Monitoring",
+        "Service providers Monitoring",
         "Service Tracking Dashboard",
         "Administrative Controls",
       ],
@@ -69,7 +69,7 @@ export function Portfolio() {
       id="portfolio"
       eyebrow="Our Portfolio"
       title="Solutions designed for real impact."
-      subtitle="Two flagship offerings that combine reliable engineering with thoughtful, user-friendly experiences."
+      subtitle="Built with reliable engineering and designed for smooth, user-friendly experiences."
       className="pt-10 md:pt-2"
     >
       <div className="grid md:grid-cols-2 gap-6">

@@ -3,7 +3,7 @@ import {
   Code2,
   Smartphone,
   Zap,
-  Cloud,
+  BarChart,
   Palette,
   Cpu,
   ArrowRight,
@@ -48,10 +48,10 @@ export function BuildWithUs() {
   const [isMinuteOpen, setIsMinuteOpen] = useState(false);
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
 
-  const projectTypeRef = useRef(null);
-  const hourRef = useRef(null);
-  const minuteRef = useRef(null);
-  const periodRef = useRef(null);
+  const projectTypeRef = useRef<HTMLDivElement>(null);
+  const hourRef = useRef<HTMLDivElement>(null);
+  const minuteRef = useRef<HTMLDivElement>(null);
+  const periodRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLInputElement | null>(null);
 
   const openDatePicker = () => {
@@ -70,7 +70,6 @@ export function BuildWithUs() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Initialize EmailJS once on component mount
   useEffect(() => {
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     if (publicKey) {
@@ -108,10 +107,11 @@ export function BuildWithUs() {
     setShowModal(true);
   };
 
-  const handlePhoneChange = e => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 12) value = value.slice(0, 12);
-    setFormData({ ...formData, phone: value });
+  // Phone number formatting: automatically adds spaces (4-3-4)
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 11) raw = raw.slice(0, 11);
+    setFormData({ ...formData, phone: raw });
   };
 
   const handleInputChange = e => {
@@ -125,7 +125,6 @@ export function BuildWithUs() {
     e.preventDefault();
     setError("");
 
-    // Validate form
     if (!formData.name || !formData.email || !formData.message || !formData.date) {
       setError("Please fill in all required fields");
       return;
@@ -198,7 +197,7 @@ export function BuildWithUs() {
     { value: "web", label: "Web Development", icon: Code2 },
     { value: "mobile", label: "Mobile App Development", icon: Smartphone },
     { value: "pos", label: "POS Systems", icon: Zap },
-    { value: "cloud", label: "Cloud Solutions", icon: Cloud },
+    { value: "cloud", label: "Analytics & BI", icon: BarChart },
     { value: "uiux", label: "UI/UX Design", icon: Palette },
     { value: "custom", label: "Custom Software", icon: Cpu },
   ];
@@ -250,11 +249,11 @@ export function BuildWithUs() {
       bgColor: "bg-[#0a0f1a]",
     },
     {
-      id: "cloud",
-      title: "Cloud Solutions",
+      id: "analytics",
+      title: "Analytics & BI",
       description:
-        "Scalable cloud infrastructure on AWS, GCP, and Azure with monitoring, security, and optimization.",
-      icon: Cloud,
+        "Data analysis, reporting, and visualization to help you understand performance and drive better business decisions.",
+      icon: BarChart,
       gradient: "from-sky-500 to-blue-400",
       bgGradient: "from-sky-600/30 to-blue-500/20",
       borderColor: "border-sky-500/50",
@@ -275,7 +274,7 @@ export function BuildWithUs() {
       id: "custom",
       title: "Custom Software Development",
       description:
-        "Bespoke solutions tailored to your unique business needs, from ideation through deployment and support.",
+        "Custom-built software designed to fit your unique business needs, from planning to launch and support.",
       icon: Cpu,
       gradient: "from-indigo-500 to-blue-400",
       bgGradient: "from-indigo-600/30 to-blue-500/20",
@@ -310,6 +309,14 @@ export function BuildWithUs() {
       icon: Trophy,
     },
   ];
+
+  // Helper to display formatted phone number (4-3-4)
+  const formatPhoneDisplay = (raw: string) => {
+    if (!raw) return "";
+    if (raw.length <= 4) return raw;
+    if (raw.length <= 7) return raw.slice(0, 4) + " " + raw.slice(4);
+    return raw.slice(0, 4) + " " + raw.slice(4, 7) + " " + raw.slice(7, 11);
+  };
 
   return (
     <section
@@ -481,7 +488,6 @@ export function BuildWithUs() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="relative bg-gradient-to-br from-[#0d1117] to-[#0a0a0f] rounded-2xl border border-white/10 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 z-30 bg-[#0d1117] border-b border-white/10 p-6 backdrop-blur-md">
-              {" "}
               <button
                 onClick={() => setShowModal(false)}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
@@ -564,11 +570,11 @@ export function BuildWithUs() {
                           type="tel"
                           name="phone"
                           disabled={isSubmitting}
-                          value={formData.phone}
+                          value={formatPhoneDisplay(formData.phone)}
                           onChange={handlePhoneChange}
-                          maxLength={12}
+                          maxLength={15}
                           className="w-full pl-10 pr-4 py-3 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                          placeholder="09123456789"
+                          placeholder="0912 345 6789"
                         />
                       </div>
                     </div>
@@ -640,7 +646,6 @@ export function BuildWithUs() {
                           onChange={handleInputChange}
                           className="custom-date-input w-full px-4 py-3 pr-10 bg-[#1a1f2e] border border-cyan-500/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         />
-
                         <Calendar
                           onClick={openDatePicker}
                           className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 cursor-pointer"
@@ -779,7 +784,6 @@ export function BuildWithUs() {
                     </div>
                   </div>
 
-                  {/* Error Message */}
                   {error && (
                     <div className="flex items-center gap-2 text-red-500 bg-red-500/10 rounded-lg p-3 text-sm border border-red-500/30">
                       <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -825,16 +829,12 @@ export function BuildWithUs() {
             transform: translateY(0);
           }
         }
-
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
         }
-
-        /* Modern Date Picker Styling */
         input[type="date"] {
           color-scheme: dark;
         }
-
         input[type="date"]::-webkit-calendar-picker-indicator {
           opacity: 0;
           position: absolute;
@@ -845,69 +845,33 @@ export function BuildWithUs() {
           opacity: 0.7;
           transition: all 0.2s ease;
         }
-
         input[type="date"]::-webkit-calendar-picker-indicator:hover {
           opacity: 1;
           transform: scale(1.1);
-          absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-400 pointer-events-none
         }
-
-        /* Dark theme for native date picker popup */
         ::-webkit-datetime-edit {
           color: white;
         }
-
         ::-webkit-datetime-edit-fields-wrapper {
           color: white;
         }
-
         ::-webkit-datetime-edit-text {
           color: #06b6d4;
         }
-
         ::-webkit-datetime-edit-month-field:hover,
         ::-webkit-datetime-edit-day-field:hover,
         ::-webkit-datetime-edit-year-field:hover {
           background-color: rgba(6, 182, 212, 0.2);
           border-radius: 4px;
         }
-
-        /* Custom scrollbar */
         .overflow-y-auto::-webkit-scrollbar {
           width: 6px;
         }
-
         .overflow-y-auto::-webkit-scrollbar-track {
           background: #0d1117;
           border-radius: 10px;
         }
-
         .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: #06b6d4;
-          border-radius: 10px;
-          transition: all 0.2s ease;
-        }
-
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #0891b2;
-        }
-
-        /* Custom scrollbar for dropdowns */
-        .overflow-y-auto.custom-scroll {
-          scrollbar-width: thin;
-          scrollbar-color: #06b6d4 #1a1f2e;
-        }
-
-        .overflow-y-auto.custom-scroll::-webkit-scrollbar {
-          width: 4px;
-        }
-
-        .overflow-y-auto.custom-scroll::-webkit-scrollbar-track {
-          background: #1a1f2e;
-          border-radius: 10px;
-        }
-
-        .overflow-y-auto.custom-scroll::-webkit-scrollbar-thumb {
           background: #06b6d4;
           border-radius: 10px;
         }

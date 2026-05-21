@@ -55,15 +55,15 @@ export function About() {
                 <Target className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <h3 className="mt-4 font-display text-2xl font-bold animate-fade-up group-hover:text-primary transition-colors duration-300">
-                Our Mission
+                Our Vision
               </h3>
               <p
                 className="mt-3 text-muted-foreground leading-relaxed animate-fade-up group-hover:text-foreground transition-colors duration-300"
                 style={{ animationDelay: "0.1s" }}
               >
-                To create reliable and user-friendly technology that transforms how services are
-                delivered. We aim to solve real problems, improve efficiency, and bring convenience
-                to both business and customers through smart digital solutions.
+                To become a trusted technology company in the Philippines, known for delivering
+                useful and impactful innovations that improve daily life and support business
+                growth.
               </p>
             </div>
           </div>
@@ -92,15 +92,15 @@ export function About() {
                 <Eye className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <h3 className="mt-4 font-display text-2xl font-bold animate-fade-up group-hover:text-primary transition-colors duration-300">
-                Our Vision
+                Our Mission
               </h3>
               <p
                 className="mt-3 text-muted-foreground leading-relaxed animate-fade-up group-hover:text-foreground transition-colors duration-300"
                 style={{ animationDelay: "0.1s" }}
               >
-                To become a trusted technology company in the Philippines, known for delivering
-                useful and impactful innovations that improve daily life and support business
-                growth.
+                To create reliable and user-friendly technology that transforms how services are
+                delivered. We aim to solve real problems, improve efficiency, and bring convenience
+                to both business and customers through smart digital solutions.
               </p>
             </div>
           </div>
@@ -130,7 +130,7 @@ export function About() {
           </div>
           <div>
             <p className="text-muted-foreground leading-relaxed">
-              SmartVend Systems Corp. was established on January 25, 2025 through the shared vision
+              Smartvend System Corp. was established on January 25, 2025 through the shared vision
               of two former classmates who aspired to build something meaningful together. What
               started as a simple idea rooted in friendship, determination, and ambition gradually
               became the foundation of the company.

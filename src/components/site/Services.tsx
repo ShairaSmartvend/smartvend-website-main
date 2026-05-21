@@ -61,7 +61,7 @@ export function Services() {
       icon: Database,
       title: "Data Engineering",
       desc: "Reliable data systems and infrastructure for storing, processing, and managing business information efficiently.",
-      points: ["Data Pipelines", "Database Management", "Real-Time Processing"],
+      points: ["Data Handling", "Database Management", "Real-Time Processing"],
     },
     {
       icon: BarChart3,
@@ -81,8 +81,8 @@ export function Services() {
     <Section
       id="services"
       eyebrow="OUR SERVICES"
-      title="Everything you need to build, ship, and scale."
-      subtitle="A modern technology partner offering deep expertise across every layer of the stack."
+      title="Everything you need to build, ship, and grow your business."
+      subtitle="A modern technology partner delivering complete end-to-end solutions."
     >
       <div className="grid md:grid-cols-3 gap-6">
         {services.map((service, index) => (

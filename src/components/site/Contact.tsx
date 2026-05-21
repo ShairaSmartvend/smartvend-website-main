@@ -15,6 +15,15 @@ export function Contact() {
     phone: "",
     message: "",
   });
+
+  // Helper to format phone number as 4-3-4
+  const formatPhoneDisplay = (raw: string) => {
+    if (!raw) return "";
+    if (raw.length <= 4) return raw;
+    if (raw.length <= 7) return raw.slice(0, 4) + " " + raw.slice(4);
+    return raw.slice(0, 4) + " " + raw.slice(4, 7) + " " + raw.slice(7, 11);
+  };
+
   // Initialize EmailJS once on component mount
   useEffect(() => {
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -52,7 +61,7 @@ export function Contact() {
     const templateParams = {
       from_name: formData.name,
       from_email: formData.email,
-      from_phone: formData.phone,
+      from_phone: formData.phone, // raw digits without spaces
       to_name: "Smartvend",
       message: formData.message,
       time: new Date().toLocaleString(),
@@ -72,14 +81,14 @@ export function Contact() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    // Phone number validation: numbers only, max 12 characters
     if (name === "phone") {
-      const numbersOnly = value.replace(/[^0-9]/g, "");
+      // Store only raw digits (max 11)
+      const numbersOnly = value.replace(/\D/g, "");
       if (numbersOnly.length <= 11) {
-        setFormData({ ...formData, [name]: numbersOnly });
+        setFormData({ ...formData, phone: numbersOnly });
       }
     } else {
       setFormData({ ...formData, [name]: value });
@@ -183,9 +192,6 @@ export function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-foreground">Send us a message</h3>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Fill out the form and we'll get back to you within 24 hours
-                  </p>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-5">
@@ -246,7 +252,7 @@ export function Contact() {
                     <input
                       type="tel"
                       name="phone"
-                      value={formData.phone}
+                      value={formatPhoneDisplay(formData.phone)}
                       onChange={handleChange}
                       onFocus={() => handleFocus("phone")}
                       onBlur={handleBlur}
@@ -290,7 +296,7 @@ export function Contact() {
                   </div>
                 )}
 
-                {/* Send Message Button - Subtle Effects */}
+                {/* Send Message Button */}
                 <div className="relative w-full">
                   <button
                     type="submit"
