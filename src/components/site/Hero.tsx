@@ -3,6 +3,7 @@ import { ArrowRight, Smartphone, Monitor } from "lucide-react";
 import { Particles } from "@/components/site/Particles";
 import heroImg from "@/assets/cleanIt.png";
 import heroImg2 from "@/assets/POS.png";
+import { Reveal } from "@/components/ui/Reveal";
 
 export function Hero() {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -28,7 +29,7 @@ export function Hero() {
       <div className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-cyan-glow/20 blur-[120px]" />
 
       <div className="relative mx-auto max-w-7xl px-5 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="animate-fade-up">
+        <Reveal direction="up" delay={0} once>
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.05]">
             Where Good <br />
             <span className="text-gradient">Ideas</span> Become <br />
@@ -52,9 +53,9 @@ export function Hero() {
               Contact Us
             </a>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="relative animate-fade-up" style={{ animationDelay: "150ms" }}>
+        <Reveal direction="up" delay={150} once>
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-cyan-glow/20 blur-3xl rounded-full" />
 
           <div
@@ -129,7 +130,7 @@ export function Hero() {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

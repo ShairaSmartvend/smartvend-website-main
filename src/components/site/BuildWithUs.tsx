@@ -8,6 +8,7 @@ import {
   Cpu,
   ArrowRight,
   CheckCircle2,
+  ShieldCheck,
   Sparkles,
   Calendar,
   Clock,
@@ -308,6 +309,12 @@ export function BuildWithUs() {
       desc: "We deploy and support your growth and success",
       icon: Trophy,
     },
+    {
+      num: "05",
+      title: "Maintain",
+      desc: "We monitor performance and keep your software secure, updated, and optimized.",
+      icon: ShieldCheck,
+    },
   ];
 
   // Helper to display formatted phone number (4-3-4)
@@ -452,7 +459,9 @@ export function BuildWithUs() {
                               ? "from-purple-500 to-pink-400"
                               : idx === 2
                                 ? "from-orange-500 to-red-400"
-                                : "from-green-500 to-emerald-400"
+                                : idx === 3
+                                  ? "from-green-500 to-emerald-400"
+                                  : "from-teal-500 to-cyan-400"
                         } flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}
                       >
                         <StepIcon className="h-6 w-6 text-white" />
