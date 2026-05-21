@@ -15,70 +15,42 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("#home");
 
+  const scrollToSection = (href: string) => {
+    const target = document.querySelector(href);
+    const header = document.querySelector("header");
+    const currentHeight = header?.offsetHeight ?? 0;
+    const offset = Math.max(currentHeight - 12, 40);
+
+    if (target) {
+      const top = Math.max(target.getBoundingClientRect().top + window.scrollY - offset, 0);
+      window.scrollTo({ top, behavior: "smooth" });
+      setActive(href);
+    }
+  };
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
 
     const handleActiveSection = () => {
-      // Check each main section first
+      const header = document.querySelector("header");
+      const headerHeight = header?.offsetHeight ?? 0;
+      const scrollPosition = window.scrollY + headerHeight + 24;
+
+      let current = "#home";
+      let currentTop = -Infinity;
+
       for (const link of links) {
         const section = document.querySelector(link.href);
         if (!section) continue;
 
-        const rect = section.getBoundingClientRect();
-        const buffer = 150;
-
-        if (rect.top <= buffer && rect.bottom >= buffer) {
-          setActive(link.href);
-          return;
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+        if (scrollPosition >= sectionTop && sectionTop > currentTop) {
+          currentTop = sectionTop;
+          current = link.href;
         }
       }
 
-      // Check About sub-sections
-      const aboutSection = document.querySelector("#about");
-      const historySection = document.querySelector("#history");
-      const missionSection = document.querySelector("#mission");
-      const visionSection = document.querySelector("#vision");
-
-      const scrollY = window.scrollY;
-
-      const isInView = (element: Element | null) => {
-        if (!element) return false;
-        const rect = element.getBoundingClientRect();
-        return rect.top <= 150 && rect.bottom >= 150;
-      };
-
-      const isInAboutSubsections =
-        isInView(historySection) || isInView(missionSection) || isInView(visionSection);
-
-      // If we're in About sub-sections, set About as active
-      if (isInAboutSubsections) {
-        setActive("#about");
-        return;
-      }
-
-      // Check if we're in the main About section
-      if (aboutSection) {
-        const aboutRect = aboutSection.getBoundingClientRect();
-        const aboutTop = aboutRect.top + window.scrollY;
-        const aboutBottom = aboutRect.bottom + window.scrollY;
-
-        if (scrollY >= aboutTop - 100 && scrollY < aboutBottom) {
-          setActive("#about");
-          return;
-        }
-      }
-
-      // If no section is found, check which section is currently visible
-      for (const link of links) {
-        const section = document.querySelector(link.href);
-        if (!section) continue;
-
-        const sectionTop = section.getBoundingClientRect().top;
-        if (sectionTop <= 100) {
-          setActive(link.href);
-          return;
-        }
-      }
+      setActive(current);
     };
 
     const onScrollCombined = () => {
@@ -129,6 +101,11 @@ export function Nav() {
               <a
                 key={l.href}
                 href={l.href}
+                onClick={e => {
+                  e.preventDefault();
+                  scrollToSection(l.href);
+                  setOpen(false);
+                }}
                 className={`px-4 py-2 text-sm rounded-lg relative group transition ${
                   active === l.href
                     ? "text-foreground"
@@ -150,6 +127,11 @@ export function Nav() {
           <div className="flex items-center gap-2">
             <a
               href="#contact"
+              onClick={e => {
+                e.preventDefault();
+                scrollToSection("#contact");
+                setOpen(false);
+              }}
               className="hidden sm:inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary to-cyan-glow text-white shadow-glow hover:shadow-glow-strong transition-all hover:scale-[1.03]"
             >
               Get Started
@@ -176,7 +158,11 @@ export function Nav() {
               <a
                 key={l.href}
                 href={l.href}
-                onClick={() => setOpen(false)}
+                onClick={e => {
+                  e.preventDefault();
+                  scrollToSection(l.href);
+                  setOpen(false);
+                }}
                 className={`block px-4 py-3 rounded-lg text-sm ${
                   active === l.href
                     ? "bg-primary/10 text-foreground"
@@ -189,7 +175,11 @@ export function Nav() {
 
             <a
               href="#contact"
-              onClick={() => setOpen(false)}
+              onClick={e => {
+                e.preventDefault();
+                scrollToSection("#contact");
+                setOpen(false);
+              }}
               className="mt-2 block text-center rounded-lg px-4 py-3 text-sm font-semibold bg-gradient-to-r from-primary to-cyan-glow text-background"
             >
               Get Started

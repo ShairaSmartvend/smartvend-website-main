@@ -21,16 +21,16 @@ export function About() {
   };
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-0 ">
       {/* Mission and Vision Section */}
       <Section
         id="about"
         eyebrow="About us"
         title="We build secure, scalable software systems that solve real-world problems."
         subtitle="SmartVend Systems Corp was founded with a simple belief — modern businesses deserve digital systems that are fast, secure, and beautifully crafted."
-        className="pb-0 mb-0"
+        className="pb-10 mb-30 pt-8 md:pt-12"
       >
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 -mt-8">
           {/* Mission Card */}
           <div
             className="group relative rounded-2xl border border-blue-400/50 bg-card p-8 card-hover overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20 active:scale-[0.98] hover:border-blue-400"
@@ -106,14 +106,15 @@ export function About() {
           </div>
         </div>
       </Section>
+
       {/* Our Story Section */}
       <Section
         id="story"
         eyebrow="Our Story"
         title="From connection to creation."
-        className="pt-0 mt-0"
+        className="pt-10 -mt-24"
       >
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center ">
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-tr from-primary/30 to-cyan-glow/20 blur-2xl rounded-3xl" />
             <div className="relative rounded-3xl overflow-hidden neon-border">

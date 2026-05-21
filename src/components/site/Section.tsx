@@ -4,15 +4,20 @@ export function Section({
   title,
   subtitle,
   children,
+  className,
 }: {
   id: string;
   eyebrow?: string;
   title?: string;
   subtitle?: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <section id={id} className="relative scroll-mt-24 py-24 md:py-32">
+    <section
+      id={id}
+      className={`relative scroll-mt-4 pt-4 pb-20 md:pt-6 md:pb-24 ${className ?? ""}`.trim()}
+    >
       <div className="mx-auto max-w-7xl px-5">
         {(eyebrow || title) && (
           <div className="mb-14 max-w-3xl">

@@ -70,6 +70,7 @@ export function Portfolio() {
       eyebrow="Our Portfolio"
       title="Solutions designed for real impact."
       subtitle="Two flagship offerings that combine reliable engineering with thoughtful, user-friendly experiences."
+      className="pt-10 md:pt-14"
     >
       <div className="grid md:grid-cols-2 gap-6">
         {projects.map((project, index) => (

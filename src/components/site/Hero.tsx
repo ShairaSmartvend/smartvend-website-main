@@ -18,7 +18,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-[100svh] flex items-center pt-32 pb-16 overflow-hidden"
+      className="relative min-h-[100svh] flex items-center pt-32 pb-16 overflow-hidden scroll-mt-20"
     >
       <div className="absolute inset-0 grid-bg opacity-40" />
       <div className="absolute inset-0">
