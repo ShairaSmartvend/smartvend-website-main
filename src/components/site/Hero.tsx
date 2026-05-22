@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowRight, Smartphone, Monitor } from "lucide-react";
 import { Particles } from "@/components/site/Particles";
 import heroImg from "@/assets/cleanIt.png";
-import heroImg2 from "@/assets/POS.png";
+import heroImg2 from "@/assets/pos.png";
 import { Reveal } from "@/components/ui/Reveal";
 
 export function Hero() {
