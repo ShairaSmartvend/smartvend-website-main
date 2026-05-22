@@ -128,7 +128,6 @@ export function Contact() {
                     icon: Phone,
                     label: "Phone",
                     value: "+63 (9) 171 802 216",
-                    href: "tel:+639171802216",
                     detail: "Monday - Friday, 9AM - 5PM",
                   },
                   {
