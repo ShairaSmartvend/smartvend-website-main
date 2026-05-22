@@ -27,7 +27,7 @@ export function About() {
         id="about"
         eyebrow="About us"
         title="We build secure, scalable software systems that solve real-world problems."
-        subtitle="SmartVend Systems Corp was founded with a simple belief — modern businesses deserve digital systems that are fast, secure, and beautifully crafted."
+        subtitle="Smartvend System Corp. was founded with a simple belief — modern businesses deserve digital systems that are fast, secure, and beautifully crafted."
         className="pb-10 mb-30 pt-8 md:pt-12"
       >
         <div className="grid gap-6 md:grid-cols-2 -mt-8">

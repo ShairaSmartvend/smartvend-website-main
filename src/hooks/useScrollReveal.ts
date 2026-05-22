@@ -4,7 +4,9 @@ interface UseScrollRevealOptions extends IntersectionObserverInit {
   once?: boolean;
 }
 
-export function useScrollReveal<T extends HTMLElement = HTMLElement>(options?: UseScrollRevealOptions) {
+export function useScrollReveal<T extends HTMLElement = HTMLElement>(
+  options?: UseScrollRevealOptions,
+) {
   const ref = useRef<T | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -29,7 +31,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLElement>(options?: U
         threshold: 0.18,
         rootMargin: "0px 0px -10% 0px",
         ...observerOptions,
-      }
+      },
     );
 
     observer.observe(element);

@@ -12,7 +12,7 @@ export function Portfolio() {
       img: posproject,
       tag: "Cloud-Based POS Platform",
       name: "POS System",
-      body: "A cloud-based point-of-sale system that enables real-time sales tracking, inventory management, and secure data access across multiple devices.",
+      body: "A point-of-sale system that enables real-time sales tracking, inventory management, and secure multi-device access. It also supports card payments, card loading services, and fast, reliable transaction processing for a seamless checkout experience.",
       features: [
         "Real-time Sales Tracking",
         "Inventory Management",
@@ -26,7 +26,7 @@ export function Portfolio() {
       img: cleanitapp,
       tag: "Mobile App",
       name: "CleanIt",
-      body: "CleanIt makes home services effortless by connecting you with trusted, professional service providers through a simple and secure mobile app.",
+      body: "CleanIt is a home services platform that connects users with trusted service providers through a simple and secure mobile app. It enables real-time booking, service tracking, and secure payments for a smooth and reliable experience.",
       features: [
         "Booking System",
         "Field Dispatch",
@@ -44,7 +44,7 @@ export function Portfolio() {
       img: cleanitweb,
       tag: "Website",
       name: "CleanIt Website",
-      body: "CleanIt is a modern informational website that presents professional home services and provides clear insights into the company's offerings and credibility.",
+      body: "CleanIt is a modern informational website that showcases professional home services with clear insights into available offerings and credibility. It also allows users to explore services and apply as service providers.",
       features: [
         "Service Information",
         "Company Profile",
@@ -88,14 +88,13 @@ export function Portfolio() {
           >
             <div
               key={index}
-              className="group relative rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400"
+              className="group relative rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400 h-full flex flex-col"
             >
               {/* Lighting effects */}
               <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition duration-500" />
               <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl group-hover:bg-cyan-500/20 transition duration-500" />
-
               {/* Image Section */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-cyan-glow/5">
+              <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-cyan-glow/5 flex-shrink-0">
                 <img
                   src={project.img}
                   className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
@@ -110,8 +109,8 @@ export function Portfolio() {
                 </div>
               </div>
 
-              {/* Content Section */}
-              <div className="relative p-5">
+              {/* Content Section - flex-grow ensures equal height */}
+              <div className="relative p-5 flex flex-col flex-grow">
                 {/* Title */}
                 <h3 className="text-2xl font-bold group-hover:text-primary transition-colors duration-300">
                   {project.name}
@@ -135,7 +134,7 @@ export function Portfolio() {
                   ))}
                 </div>
 
-                {/* Buttons */}
+                {/* Buttons - untouched */}
                 <div className="mt-5 flex flex-wrap gap-3">
                   {project.link && (
                     <a

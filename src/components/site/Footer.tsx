@@ -1,4 +1,5 @@
-import { Github, Linkedin, Twitter, Facebook, Mail, FileText, Shield } from "lucide-react";
+import { Facebook, Instagram, Mail, FileText, Shield } from "lucide-react";
+import { FaTiktok, FaXTwitter } from "react-icons/fa6";
 import logoSVSC from "@/assets/logo-svsc-main.png";
 
 const links = [
@@ -16,9 +17,9 @@ const legalLinks = [
 
 const socialLinks = [
   { icon: Facebook, href: "#", label: "Facebook", color: "hover:text-blue-500" },
-  { icon: Twitter, href: "#", label: "Twitter", color: "hover:text-sky-400" },
-  { icon: Linkedin, href: "#", label: "LinkedIn", color: "hover:text-blue-600" },
-  { icon: Github, href: "#", label: "GitHub", color: "hover:text-gray-400" },
+  { icon: FaTiktok, href: "#", label: "TikTok", color: "hover:text-pink-500" },
+  { icon: Instagram, href: "#", label: "Instagram", color: "hover:text-pink-600" },
+  { icon: FaXTwitter, href: "#", label: "X", color: "hover:text-gray-400" },
 ];
 
 export function Footer() {
@@ -39,7 +40,6 @@ export function Footer() {
       `}</style>
 
       <div className="mx-auto max-w-7xl px-6 py-14">
-        {/* Balanced grid – increased gap to separate columns evenly */}
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-14 lg:gap-y-8">
           {/* Column 1 – Brand (with logo shine) */}
           <div className="space-y-5">
@@ -67,10 +67,10 @@ export function Footer() {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4 flex-shrink-0" />
               <a
-                href="mailto:smartvendsystem@smartvend.ph"
-                className="hover:text-primary transition-colors"
+                // href="mailto:info@smartvendsystem.ph"
+                className="hover:text-primary transition-colors cursor-text"
               >
-                smartvendsystem@smartvend.ph
+                info@smartvendsystem.ph
               </a>
             </div>
           </div>

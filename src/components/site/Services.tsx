@@ -34,12 +34,6 @@ export function Services() {
       desc: "Clean and intuitive designs focused on creating better experiences for users across all devices.",
       points: ["Wireframing", "Modern Interfaces", "User Experience"],
     },
-    // {
-    //   icon: Cloud,
-    //   title: "Cloud Solutions",
-    //   desc: "Cloud hosting, deployment, and scalable infrastructure solutions for modern applications and systems.",
-    //   points: ["Cloud Hosting", "Deployment", "Scalable Infrastructure"],
-    // },
     {
       icon: Cpu,
       title: "API Development",
@@ -87,13 +81,10 @@ export function Services() {
     >
       <div className="grid md:grid-cols-3 gap-6">
         {services.map((service, index) => (
-          <Reveal key={index} direction={index % 2 === 0 ? "up" : "up"} delay={index * 80} once>
-            <div
-              key={index}
-              className="group relative rounded-3xl p-8 overflow-hidden transition-all duration-300 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400"
-            >
+          <Reveal key={index} direction="up" delay={index * 100} once>
+            <div className="group relative rounded-3xl p-8 overflow-hidden transition-all duration-300 hover:scale-[1.02] border border-cyan-400/50 bg-card hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-400 h-full flex flex-col">
               <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl group-hover:bg-primary/40 transition" />
-              <div className="relative">
+              <div className="relative flex flex-col h-full">
                 <div className="flex items-center justify-between">
                   <div className="h-14 w-14 grid place-items-center rounded-2xl bg-gradient-to-br from-primary to-cyan-400 shadow-glow">
                     <service.icon className="h-6 w-6 text-white" />
@@ -103,7 +94,7 @@ export function Services() {
                   </span>
                 </div>
                 <h3 className="mt-6 text-2xl font-bold text-white">{service.title}</h3>
-                <p className="mt-3 text-gray-300 leading-relaxed">{service.desc}</p>
+                <p className="mt-3 text-gray-300 leading-relaxed flex-grow">{service.desc}</p>
                 <ul className="mt-5 space-y-2">
                   {service.points.map((point, idx) => (
                     <li key={idx} className="flex items-center gap-2 text-sm text-gray-300">

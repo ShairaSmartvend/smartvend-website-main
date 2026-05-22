@@ -171,7 +171,7 @@ function PrivacyPolicyComponent() {
               <div className="space-y-2 text-gray-400">
                 <p>
                   <span className="text-cyan-400 font-semibold">Email:</span>{" "}
-                  smartvendsystem@gmail.com
+                  info@smartvendsystem.ph
                 </p>
                 <p>
                   <span className="text-cyan-400 font-semibold">Company:</span> SmartVend System

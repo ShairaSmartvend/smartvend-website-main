@@ -126,10 +126,10 @@ export function Nav() {
           {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-2">
             <a
-              href="#contact"
+              href="#projects"
               onClick={e => {
                 e.preventDefault();
-                scrollToSection("#contact");
+                scrollToSection("#projects");
                 setOpen(false);
               }}
               className="hidden sm:inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary to-cyan-glow text-white shadow-glow hover:shadow-glow-strong transition-all hover:scale-[1.03]"
