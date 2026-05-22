@@ -174,7 +174,7 @@ function PrivacyPolicyComponent() {
                   info@smartvendsystem.ph
                 </p>
                 <p>
-                  <span className="text-cyan-400 font-semibold">Company:</span> SmartVend System
+                  <span className="text-cyan-400 font-semibold">Company:</span> Smartvend System
                   Corporation
                 </p>
               </div>
