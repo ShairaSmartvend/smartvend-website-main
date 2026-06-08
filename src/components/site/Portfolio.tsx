@@ -37,7 +37,7 @@ export function Portfolio() {
       link: "https://play.google.com/store/apps/details?id=com.cleanit.activities",
       linkText: "Download on Android",
 
-      link2: "https://apps.apple.com/ph/app/clean-it/id6760164466",
+      link2: "https://apps.apple.com/ph/app/clean-it-mobile-app/id6774019021",
       linkText2: "Download on iOS",
     },
     {
