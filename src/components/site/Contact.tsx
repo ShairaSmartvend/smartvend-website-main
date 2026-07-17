@@ -133,7 +133,7 @@ export function Contact() {
                   {
                     icon: Mail,
                     label: "Email",
-                    value: "info@smartvendsystem.ph",
+                    value: "info@smartvendsystem.tech",
                     detail: "24/7 Support",
                   },
                   {

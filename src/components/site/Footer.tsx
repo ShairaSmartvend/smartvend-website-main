@@ -68,10 +68,10 @@ export function Footer() {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4 flex-shrink-0" />
               <a
-                // href="mailto:info@smartvendsystem.ph"
+                // href="mailto:info@smartvendsystem.tech"
                 className="hover:text-primary transition-colors cursor-text"
               >
-                info@smartvendsystem.ph
+                info@smartvendsystem.tech
               </a>
             </div>
           </div>

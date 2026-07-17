@@ -151,7 +151,7 @@ function TermsOfServiceComponent() {
               <div className="space-y-2 text-gray-400">
                 <p>
                   <span className="text-cyan-400 font-semibold">Email:</span>{" "}
-                  info@smartvendsystem.ph
+                  info@smartvendsystem.tech
                 </p>
                 <p>
                   <span className="text-cyan-400 font-semibold">Company:</span> Smartvend System
