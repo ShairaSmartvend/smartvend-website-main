@@ -1,15 +1,19 @@
-import { useState, useRef } from "react";
-import { AlertCircle, CheckCircle2, Upload, Loader2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { AlertCircle, CheckCircle2, Upload, Loader2, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import modgcashQR from "@/assets/modgcash.jpg";
 
 interface RegistrationFormData {
-  fullName: string;
-  age: string;
+  firstName: string;
+  lastName: string;
+  birthday: string;
+  email: string;
   phoneNumber: string;
   barangay: string;
   instructorName: string;
+  civilStatus: "single" | "married" | "widowed" | "divorced" | "separated" | null;
   registrationPackage: "regular" | "vip" | null;
-  modeOfPayment: "cash" | "gcash" | "bank-transfer" | null;
+  modeOfPayment: "gcash" | "bank-transfer" | null;
   gcashProof: File | null;
   bankProof: File | null;
 }
@@ -20,11 +24,14 @@ interface FormErrors {
 
 export function ZumbaRegistration() {
   const [formData, setFormData] = useState<RegistrationFormData>({
-    fullName: "",
-    age: "",
+    firstName: "",
+    lastName: "",
+    birthday: "",
+    email: "",
     phoneNumber: "",
     barangay: "",
     instructorName: "",
+    civilStatus: null,
     registrationPackage: null,
     modeOfPayment: null,
     gcashProof: null,
@@ -35,29 +42,53 @@ export function ZumbaRegistration() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [isCivilStatusOpen, setIsCivilStatusOpen] = useState(false);
   const gcashFileInputRef = useRef<HTMLInputElement>(null);
   const bankFileInputRef = useRef<HTMLInputElement>(null);
+  const civilStatusRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (civilStatusRef.current && !civilStatusRef.current.contains(event.target as Node)) {
+        setIsCivilStatusOpen(false);
+      }
+    };
+
+    if (isCivilStatusOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isCivilStatusOpen]);
 
   const packagePrices = {
     regular: 150,
     vip: 300,
   };
 
+  const calculateAge = (birthDate: string): number => {
+    if (!birthDate) return 0;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === "age") {
-      // Only allow numbers and max 2 digits
-      const numbersOnly = value.replace(/\D/g, "");
-      if (numbersOnly.length <= 2) {
-        setFormData(prev => ({ ...prev, age: numbersOnly }));
-      }
-    } else if (name === "phoneNumber") {
+    if (name === "phoneNumber") {
       // Only allow numbers
       const numbersOnly = value.replace(/\D/g, "");
       if (numbersOnly.length <= 11) {
         setFormData(prev => ({ ...prev, phoneNumber: numbersOnly }));
       }
+    } else if (name === "birthday") {
+      setFormData(prev => ({ ...prev, birthday: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -83,7 +114,20 @@ export function ZumbaRegistration() {
     }
   };
 
-  const handlePaymentMethodSelect = (method: "cash" | "gcash" | "bank-transfer") => {
+  const handleCivilStatusSelect = (
+    status: "single" | "married" | "widowed" | "divorced" | "separated",
+  ) => {
+    setFormData(prev => ({ ...prev, civilStatus: status }));
+    if (errors.civilStatus) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.civilStatus;
+        return newErrors;
+      });
+    }
+  };
+
+  const handlePaymentMethodSelect = (method: "gcash" | "bank-transfer") => {
     setFormData(prev => ({
       ...prev,
       modeOfPayment: method,
@@ -135,18 +179,28 @@ export function ZumbaRegistration() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
     }
 
-    if (!formData.age) {
-      newErrors.age = "Age is required";
-    } else if (
-      isNaN(Number(formData.age)) ||
-      Number(formData.age) < 1 ||
-      Number(formData.age) > 150
-    ) {
-      newErrors.age = "Please enter a valid age";
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+
+    if (!formData.birthday) {
+      newErrors.birthday = "Birthday is required";
+    } else {
+      const birthDate = new Date(formData.birthday);
+      const today = new Date();
+      if (birthDate > today) {
+        newErrors.birthday = "Birthday cannot be in the future";
+      }
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.phoneNumber) {
@@ -159,6 +213,10 @@ export function ZumbaRegistration() {
 
     if (!formData.barangay.trim()) {
       newErrors.barangay = "Barangay is required";
+    }
+
+    if (!formData.civilStatus) {
+      newErrors.civilStatus = "Please select a civil status";
     }
 
     if (!formData.registrationPackage) {
@@ -234,18 +292,22 @@ export function ZumbaRegistration() {
               {formData.registrationPackage === "regular" ? "Regular" : "VIP"}
             </p>
             <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Name:</span> {formData.fullName}
+              <span className="font-semibold text-gray-900">Name:</span> {formData.firstName}{" "}
+              {formData.lastName}
             </p>
           </div>
           <button
             onClick={() => {
               setIsSubmitted(false);
               setFormData({
-                fullName: "",
-                age: "",
+                firstName: "",
+                lastName: "",
+                birthday: "",
+                email: "",
                 phoneNumber: "",
                 barangay: "",
                 instructorName: "",
+                civilStatus: null,
                 registrationPackage: null,
                 modeOfPayment: null,
                 gcashProof: null,
@@ -431,48 +493,102 @@ export function ZumbaRegistration() {
               <div className="space-y-3 md:space-y-4 border-t pt-6 md:pt-8">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900">Personal Information</h3>
 
-                {/* Full Name */}
+                {/* First Name and Last Name - Side by side on desktop, stacked on mobile */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                  {/* First Name */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      First Name <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      placeholder="Enter your first name"
+                      className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
+                        errors.firstName
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
+                      } outline-none`}
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-600 text-sm font-medium mt-1">{errors.firstName}</p>
+                    )}
+                  </div>
+
+                  {/* Last Name */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      Last Name <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      placeholder="Enter your last name"
+                      className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
+                        errors.lastName
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
+                      } outline-none`}
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-600 text-sm font-medium mt-1">{errors.lastName}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Birthday */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Full Name <span className="text-red-600">*</span>
+                    Birthday <span className="text-red-600">*</span>
                   </label>
                   <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
+                    type="date"
+                    name="birthday"
+                    value={formData.birthday}
                     onChange={handleInputChange}
-                    placeholder="Enter your full name"
-                    className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
-                      errors.fullName
+                    max={new Date().toISOString().split("T")[0]}
+                    className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black ${
+                      errors.birthday
                         ? "border-red-500 bg-red-50"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
-                  {errors.fullName && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.fullName}</p>
+                  {errors.birthday && (
+                    <p className="text-red-600 text-sm font-medium mt-1">{errors.birthday}</p>
                   )}
                 </div>
 
-                {/* Age */}
+                {/* Age Display - Calculated from Birthday */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Age</label>
+                  <div className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 bg-gray-100 text-black font-semibold">
+                    {formData.birthday ? `${calculateAge(formData.birthday)} years old` : "--"}
+                  </div>
+                </div>
+
+                {/* Email */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Age <span className="text-red-600">*</span>
+                    Email <span className="text-red-600">*</span>
                   </label>
                   <input
-                    type="text"
-                    name="age"
-                    value={formData.age}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your age"
-                    inputMode="numeric"
+                    placeholder="Enter your email address"
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
-                      errors.age
+                      errors.email
                         ? "border-red-500 bg-red-50"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
-                  {errors.age && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.age}</p>
+                  {errors.email && (
+                    <p className="text-red-600 text-sm font-medium mt-1">{errors.email}</p>
                   )}
                 </div>
 
@@ -522,6 +638,71 @@ export function ZumbaRegistration() {
                   )}
                 </div>
 
+                {/* Civil Status */}
+                <div ref={civilStatusRef}>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Civil Status <span className="text-red-600">*</span>
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsCivilStatusOpen(!isCivilStatusOpen)}
+                      className={`w-full px-4 py-2 pr-10 rounded-lg border-2 transition-colors text-black text-left appearance-none cursor-pointer ${
+                        errors.civilStatus
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
+                      } outline-none focus:border-purple-500 focus:bg-white`}
+                    >
+                      {formData.civilStatus
+                        ? {
+                            single: "Single",
+                            married: "Married",
+                            widowed: "Widowed",
+                            divorced: "Divorced",
+                            separated: "Separated",
+                          }[formData.civilStatus]
+                        : "Select a civil status"}
+                    </button>
+                    <ChevronDown
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none transition-transform duration-300 ${
+                        isCivilStatusOpen ? "rotate-180" : ""
+                      }`}
+                    />
+
+                    {/* Dropdown Menu */}
+                    {isCivilStatusOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-lg z-10">
+                        {[
+                          { value: "single" as const, label: "Single" },
+                          { value: "married" as const, label: "Married" },
+                          { value: "widowed" as const, label: "Widowed" },
+                          { value: "divorced" as const, label: "Divorced" },
+                          { value: "separated" as const, label: "Separated" },
+                        ].map(option => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => {
+                              handleCivilStatusSelect(option.value);
+                              setIsCivilStatusOpen(false);
+                            }}
+                            className={`w-full px-4 py-2 text-left transition-colors ${
+                              formData.civilStatus === option.value
+                                ? "bg-purple-100 text-purple-900 font-semibold"
+                                : "text-gray-700 hover:bg-gray-100"
+                            } first:rounded-t-md last:rounded-b-md`}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {errors.civilStatus && (
+                    <p className="text-red-600 text-sm font-medium mt-1">{errors.civilStatus}</p>
+                  )}
+                </div>
+
                 {/* Instructor Name (Optional) */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -541,21 +722,18 @@ export function ZumbaRegistration() {
               {/* Mode of Payment Section */}
               <div className="space-y-3 md:space-y-4 border-t pt-6 md:pt-8">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900">Mode of Payment</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-                  {["cash", "gcash", "bank-transfer"].map(method => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  {["gcash", "bank-transfer"].map(method => (
                     <button
                       key={method}
                       type="button"
-                      onClick={() =>
-                        handlePaymentMethodSelect(method as "cash" | "gcash" | "bank-transfer")
-                      }
+                      onClick={() => handlePaymentMethodSelect(method as "gcash" | "bank-transfer")}
                       className={`p-3 sm:p-4 rounded-lg border-2 font-semibold transition-all text-sm sm:text-base ${
                         formData.modeOfPayment === method
                           ? "border-purple-600 bg-purple-50 text-purple-900"
                           : "border-gray-300 bg-white text-gray-700 hover:border-purple-300"
                       }`}
                     >
-                      {method === "cash" && "Cash"}
                       {method === "gcash" && "GCash"}
                       {method === "bank-transfer" && "Bank Transfer"}
                     </button>
@@ -565,35 +743,28 @@ export function ZumbaRegistration() {
                   <p className="text-red-600 text-sm font-medium">{errors.modeOfPayment}</p>
                 )}
 
-                {/* Cash Payment */}
-                {formData.modeOfPayment === "cash" && (
-                  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-semibold text-gray-900">Payment Method:</span> Payment
-                      will be made during the event.
-                    </p>
-                  </div>
-                )}
-
                 {/* GCash Payment */}
                 {formData.modeOfPayment === "gcash" && (
                   <div className="mt-6 space-y-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <h4 className="font-semibold text-gray-900">GCash Payment</h4>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        GCash Account Name
-                      </label>
-                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500">
-                        ____________________
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        GCash Account Number
-                      </label>
-                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500">
-                        ____________________
-                      </div>
+                    <p className="text-sm text-gray-700">Scan the QR code below to pay.</p>
+                    <div className="flex justify-center my-6">
+                      <img
+                        src={modgcashQR}
+                        alt="GCash QR Code"
+                        className="max-w-sm w-full h-auto rounded-lg border-2 border-gray-300"
+                        onError={e => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                          // Show error message
+                          const parent = (e.target as HTMLImageElement).parentElement;
+                          if (parent) {
+                            const errorDiv = document.createElement("div");
+                            errorDiv.className = "text-center text-red-600 p-4";
+                            errorDiv.textContent = "QR Code image not found";
+                            parent.appendChild(errorDiv);
+                          }
+                        }}
+                      />
                     </div>
                     <div className="border-t border-blue-200 pt-4">
                       <label className="block text-sm font-semibold text-gray-900 mb-3">
@@ -646,24 +817,24 @@ export function ZumbaRegistration() {
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
                         Bank Name
                       </label>
-                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500">
-                        ____________________
+                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-900 font-medium">
+                        TOPBANK PH
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
                         Account Name
                       </label>
-                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500">
-                        ____________________
+                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-900 font-medium">
+                        SMARTVEND SYSTEM CORPORATION
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
                         Account Number
                       </label>
-                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500">
-                        ____________________
+                      <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-900 font-medium">
+                        022-209-00005-8
                       </div>
                     </div>
                     <div className="border-t border-blue-200 pt-4">
@@ -728,11 +899,11 @@ export function ZumbaRegistration() {
                     <div className="flex justify-between text-sm md:text-base">
                       <span className="text-gray-700">Mode of Payment:</span>
                       <span className="font-semibold text-gray-900">
-                        {formData.modeOfPayment === "cash"
-                          ? "Cash"
-                          : formData.modeOfPayment === "gcash"
-                            ? "GCash"
-                            : "Bank Transfer"}
+                        {formData.modeOfPayment === "gcash"
+                          ? "GCash"
+                          : formData.modeOfPayment === "bank-transfer"
+                            ? "Bank Transfer"
+                            : "Not selected"}
                       </span>
                     </div>
                   </div>
