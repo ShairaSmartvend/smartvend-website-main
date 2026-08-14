@@ -319,6 +319,41 @@ export function ZumbaRegistration() {
           >
             Register Another Person
           </button>
+
+          {/* CleanIt App Promotion - small ad-like section */}
+          <div className="mt-6 pt-6 border-t border-gray-100 text-left">
+            <h3 className="text-sm font-semibold text-gray-700">Want to experience more from CleanIt?</h3>
+            <h4 className="text-lg font-bold text-gray-900 mt-1">Download the CleanIt App</h4>
+            <p className="text-sm text-gray-600 mt-2 mb-4">Get the CleanIt mobile app and conveniently access CleanIt's services from your phone.</p>
+
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.cleanit.activities"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-black text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
+              >
+                {/* Android / Google Play icon (simple play triangle) */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="currentColor" aria-hidden>
+                  <path d="M3.11 2.18a1.5 1.5 0 0 0-1.6.17C.9 3.41.9 3.41.9 6v12c0 2.6 0 2.59.61 3.65.44.77 1.37 1.18 2.25.94l13.72-4.28c1.1-.34 1.1-.34 1.1-1.6V8.06c0-1.26 0-1.26-1.1-1.6L3.76 2.14c-.2-.06-.41-.09-.65.04z" />
+                </svg>
+                <span className="text-sm font-semibold">Download on Android</span>
+              </a>
+
+              <a
+                href="https://apps.apple.com/ph/app/clean-it-mobile-app/id6774019021"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-gray-900 text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
+              >
+                {/* Apple icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="currentColor" aria-hidden>
+                  <path d="M16.365 1.43c.002 0 2.01.015 3.96 1.53-1.17 1.02-2.4 2.53-2.78 4.15-1.04.04-2.6-.67-3.44-.67-.78 0-2.1.62-3.24.62-1.35 0-2.9-.86-4.57-.86-.99 0-2.03.33-2.99.99A9.91 9.91 0 0 0 .95 9.97c-.4 1.91-.4 5.87 0 7.78 1.01 4.77 4.14 7.45 7.73 7.45 1.23 0 2.43-.37 3.45-1.08 1.06-.74 2.11-.74 3.17 0 1.02.71 2.24 1.08 3.46 1.08 3.58 0 6.71-2.69 7.73-7.46.41-1.92.41-5.88 0-7.8a9.92 9.92 0 0 0-2.27-3.94c-1.05.55-2.2.77-3.33.77-.95 0-1.97-.2-2.94-.62.03-.72.04-1.58-.08-2.22-.16-.9-.52-1.67-.94-2.21-1.06-.71-2.24-1.08-3.46-1.08-1.96 0-3.97 1.05-5.58 1.05-1.21 0-2.3-.5-3.17-1.39C7.86 2.44 9.93 1 12.62 1c1.12 0 2.13.3 3.21.9 1.05.57 1.86.81 2.53.86z" />
+                </svg>
+                <span className="text-sm font-semibold">Download on iOS</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -838,7 +873,10 @@ export function ZumbaRegistration() {
                       </div>
                     </div>
                     <div className="border-t border-blue-200 pt-4">
-                      <label className="block text-sm font-semibold text-gray-900 mb-3">
+                      <label
+                        className="block text-sm font-semibold text-gray
+                      -900 mb-3"
+                      >
                         Upload Proof of Payment <span className="text-red-600">*</span>
                       </label>
                       <p className="text-xs text-gray-600 mb-3">
