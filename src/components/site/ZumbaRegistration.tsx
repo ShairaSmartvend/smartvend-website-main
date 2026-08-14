@@ -322,9 +322,13 @@ export function ZumbaRegistration() {
 
           {/* CleanIt App Promotion - small ad-like section */}
           <div className="mt-6 pt-6 border-t border-gray-100 text-left">
-            <h3 className="text-sm font-semibold text-gray-700">Want to experience more from CleanIt?</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Want to experience more from CleanIt?
+            </h3>
             <h4 className="text-lg font-bold text-gray-900 mt-1">Download the CleanIt App</h4>
-            <p className="text-sm text-gray-600 mt-2 mb-4">Get the CleanIt mobile app and conveniently access CleanIt's services from your phone.</p>
+            <p className="text-sm text-gray-600 mt-2 mb-4">
+              Get the CleanIt mobile app and conveniently access CleanIt's services from your phone.
+            </p>
 
             <div className="flex flex-col md:flex-row gap-3 md:gap-4">
               <a
@@ -334,7 +338,13 @@ export function ZumbaRegistration() {
                 className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-black text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
               >
                 {/* Android / Google Play icon (triangle) */}
-                <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-7 h-7 flex-shrink-0"
+                  fill="currentColor"
+                  aria-hidden
+                  preserveAspectRatio="xMidYMid meet"
+                >
                   <path d="M3 2.5L20 12 3 21.5V2.5z" />
                 </svg>
                 <span className="text-sm font-semibold">Download on Android</span>
@@ -347,7 +357,13 @@ export function ZumbaRegistration() {
                 className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-gray-900 text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
               >
                 {/* Apple icon */}
-                <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-9 h-9 flex-shrink-0"
+                  fill="currentColor"
+                  aria-hidden
+                  preserveAspectRatio="xMidYMid meet"
+                >
                   <path d="M16.365 1.43c-.99.02-2.16.63-2.86 1.29-.79.74-1.47 1.98-1.23 3.15 1.3.1 2.66-.66 3.51-1.56.84-.9 1.23-2.07.58-3.08zM12.5 5.5c-1.64 0-3.26.98-4.23 2.55-1.6 2.6-.43 6.25 1 8.45.66 1.04 1.5 2.2 2.77 2.2 1.2 0 1.55-.77 3.15-.77 1.6 0 1.95.77 3.15.76 1.33 0 2.13-1.06 2.78-2.1.45-.78.64-1.52.66-1.56-.02-.01-2.35-.9-2.41-3.48-.05-2.3 1.86-3.33 1.96-3.4-.85-1.23-2.18-1.34-2.65-1.34-1.14 0-2.24.67-2.86.67-.64 0-1.9-.68-3.22-.68z" />
                 </svg>
                 <span className="text-sm font-semibold">Download on iOS</span>
@@ -398,6 +414,69 @@ export function ZumbaRegistration() {
                   <AlertDescription>{submitError}</AlertDescription>
                 </Alert>
               )}
+
+              {/* Event Information - highlighted card above packages */}
+              <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-4 mb-4">
+                <h4 className="text-sm font-semibold text-purple-800">EVENT INFORMATION</h4>
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                      {/* Calendar icon */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                        <path d="M7 10h5v5H7z" opacity="0.9" />
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H5V9h14v9z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 font-semibold">Date</p>
+                      <p className="text-sm text-gray-900">[Event Date]</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                      {/* Location / Pin icon */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                        <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 font-semibold">Location</p>
+                      <p className="text-sm text-gray-900">[Event Location]</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                      {/* Phone icon */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                        <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.36 11.36 0 0 0 3.55.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.55 1 1 0 0 1-.24 1.01l-2.21 2.23z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 font-semibold">Contact</p>
+                      <p className="text-sm text-gray-900">
+                        <a href="tel:09171802216" className="hover:underline">0917 180 2216</a>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                      {/* Mail icon */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                        <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 font-semibold">Email</p>
+                      <p className="text-sm text-gray-900">
+                        <a href="mailto:info@cleanit.business" className="hover:underline">info@cleanit.business</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Registration Packages Section */}
               <div className="space-y-4">
