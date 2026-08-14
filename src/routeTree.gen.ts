@@ -14,6 +14,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ContactRouteImport } from './routes/Contact'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ZumbaRegistrationRouteImport } from './routes/zumba-registration'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ZumbaRegistrationRoute = ZumbaRegistrationRouteImport.update({
+  id: '/zumba-registration',
+  path: '/zumba-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/zumba-registration': typeof ZumbaRegistrationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/zumba-registration': typeof ZumbaRegistrationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +70,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/zumba-registration': typeof ZumbaRegistrationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,8 +80,9 @@ export interface FileRouteTypes {
     | '/home'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/zumba-registration'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/Contact' | '/home' | '/privacy-policy' | '/terms-of-service'
+  to: '/' | '/Contact' | '/home' | '/privacy-policy' | '/terms-of-service' | '/zumba-registration'
   id:
     | '__root__'
     | '/'
@@ -80,6 +90,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/zumba-registration'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +99,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
+  ZumbaRegistrationRoute: typeof ZumbaRegistrationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -127,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/zumba-registration': {
+      id: '/zumba-registration'
+      path: '/zumba-registration'
+      fullPath: '/zumba-registration'
+      preLoaderRoute: typeof ZumbaRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -136,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
+  ZumbaRegistrationRoute: ZumbaRegistrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
