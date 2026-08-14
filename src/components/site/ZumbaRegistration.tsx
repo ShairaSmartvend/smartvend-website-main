@@ -834,7 +834,7 @@ export function ZumbaRegistration() {
                         Account Number
                       </label>
                       <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-900 font-medium">
-                        {/* 022-209-00005-8 */}
+                        {/* 022-209-00005-8 */}000-000-00000-0
                       </div>
                     </div>
                     <div className="border-t border-blue-200 pt-4">
