@@ -62,9 +62,19 @@ export function ZumbaRegistration() {
   }, [isCivilStatusOpen]);
 
   const packagePrices = {
-    regular: 150,
-    vip: 300,
+    regular: 109,
+    vip: 190,
   };
+
+  const contestCategories = [
+    "Best Dressed",
+    "Best Dancer",
+    "Best Zumba Instructor",
+    "Most Energetic Participant",
+    "Best Group / Team Spirit",
+    "CleanIt App Star",
+    "Social Media Star",
+  ];
 
   const calculateAge = (birthDate: string): number => {
     if (!birthDate) return 0;
@@ -422,41 +432,68 @@ export function ZumbaRegistration() {
                   <div className="flex items-start gap-3">
                     <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
                       {/* Calendar icon */}
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        aria-hidden
+                        preserveAspectRatio="xMidYMid meet"
+                      >
                         <path d="M7 10h5v5H7z" opacity="0.9" />
                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H5V9h14v9z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-600 font-semibold">Date</p>
-                      <p className="text-sm text-gray-900">[Event Date]</p>
+                      <p className="text-xs text-gray-600 font-semibold">Date & Time</p>
+                      <p className="text-sm text-gray-900">
+                        August 12, 2026 <br /> 9 AM onwards
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
                       {/* Location / Pin icon */}
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        aria-hidden
+                        preserveAspectRatio="xMidYMid meet"
+                      >
                         <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
                       </svg>
                     </div>
                     <div>
                       <p className="text-xs text-gray-600 font-semibold">Location</p>
-                      <p className="text-sm text-gray-900">[Event Location]</p>
+                      <p className="text-sm text-gray-900">
+                        Ground Floor, Trade Hall, Robinsons Novaliches{" "}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
                       {/* Phone icon */}
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        aria-hidden
+                        preserveAspectRatio="xMidYMid meet"
+                      >
                         <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.36 11.36 0 0 0 3.55.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.55 1 1 0 0 1-.24 1.01l-2.21 2.23z" />
                       </svg>
                     </div>
                     <div>
                       <p className="text-xs text-gray-600 font-semibold">Contact</p>
                       <p className="text-sm text-gray-900">
-                        <a href="tel:09171802216" className="hover:underline">0917 180 2216</a>
+                        <a href="tel:09171802216" className="hover:underline">
+                          0917 180 2216
+                        </a>
                       </p>
                     </div>
                   </div>
@@ -464,14 +501,23 @@ export function ZumbaRegistration() {
                   <div className="flex items-start gap-3">
                     <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
                       {/* Mail icon */}
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden preserveAspectRatio="xMidYMid meet">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        aria-hidden
+                        preserveAspectRatio="xMidYMid meet"
+                      >
                         <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                       </svg>
                     </div>
                     <div>
                       <p className="text-xs text-gray-600 font-semibold">Email</p>
                       <p className="text-sm text-gray-900">
-                        <a href="mailto:info@cleanit.business" className="hover:underline">info@cleanit.business</a>
+                        <a href="mailto:info@cleanit.business" className="hover:underline">
+                          info@cleanit.business
+                        </a>
                       </p>
                     </div>
                   </div>
@@ -497,7 +543,7 @@ export function ZumbaRegistration() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h4 className="text-lg font-bold text-gray-900">Regular</h4>
-                        <p className="text-xl sm:text-2xl font-bold text-purple-600 mt-1">₱150</p>
+                        <p className="text-xl sm:text-2xl font-bold text-purple-600 mt-1">₱109</p>
                       </div>
                       <div
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
@@ -532,6 +578,14 @@ export function ZumbaRegistration() {
                         <span className="text-purple-600 mr-2 font-bold">•</span>
                         <span>1 Raffle Ticket</span>
                       </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Certificate of Participation</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Snacks & Drinks</span>
+                      </li>
                     </ul>
                   </button>
 
@@ -548,7 +602,7 @@ export function ZumbaRegistration() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h4 className="text-lg font-bold text-gray-900">VIP</h4>
-                        <p className="text-xl sm:text-2xl font-bold text-blue-600 mt-1">₱300</p>
+                        <p className="text-xl sm:text-2xl font-bold text-blue-600 mt-1">₱190</p>
                       </div>
                       <div
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
@@ -587,9 +641,40 @@ export function ZumbaRegistration() {
                         <span className="text-blue-600 mr-2 font-bold">•</span>
                         <span>1 Raffle Ticket</span>
                       </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Certificate of Participation</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Snacks & Drinks</span>
+                      </li>
                     </ul>
                   </button>
                 </div>
+                <div className="mt-5 space-y-3">
+                  <div>
+                    <h4 className="text-base font-bold text-gray-900">Contest Categories</h4>
+                    <p className="text-sm italic text-purple-700/80">
+                      Vouchers, Trophies, and Medals
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+                    {contestCategories.map(category => (
+                      <div
+                        key={category}
+                        className="flex items-center rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm"
+                      >
+                        <span className="mr-2 text-base" aria-hidden="true">
+                          ⭐
+                        </span>
+                        <span>{category}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="bg-gray-50 rounded-lg p-4 mt-4">
                   <p className="text-xs sm:text-sm text-gray-700 mb-2">
                     <span className="font-semibold text-gray-900">Raffle Prizes:</span>
