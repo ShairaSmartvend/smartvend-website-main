@@ -67,14 +67,38 @@ export function ZumbaRegistration() {
   };
 
   const contestCategories = [
-    "Best Dressed",
-    "Best Dancer",
-    "Best Zumba Instructor",
-    "Most Energetic Participant",
-    "Best Group / Team Spirit",
-    "CleanIt App Star",
-    "Social Media Star",
+    {
+      title: "Best Dressed",
+      criteria: 'Most "bongga" and stylish Zumba-Fit outfit.',
+    },
+    {
+      title: "Best Dancer",
+      criteria: 'Dancer who has that flashy "pitik" and consistently timed Zumba moves.',
+    },
+    {
+      title: "Best Zumba Instructor",
+      criteria: "Instructor who has the best choreographed/coordinated team.",
+    },
+    {
+      title: "Most Energetic Participant",
+      criteria: "Never ran out of Zumba energy all throughout the event.",
+    },
+    {
+      title: "Best Group / Team Spirit",
+      criteria: "Most flawless coordination and Zumba-Fit moves.",
+    },
+    {
+      title: "Social Media Star",
+      criteria: "Most creative shot uploaded to Facebook using the hashtag \n #Zumba-FitbyCleanIt.",
+    },
   ];
+
+  const centeredContestCategory = {
+    title: "CleanIt App Star",
+    criteria: "Most active CleanIt app account/registration.",
+  };
+
+  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
 
   const calculateAge = (birthDate: string): number => {
     if (!birthDate) return 0;
@@ -660,18 +684,79 @@ export function ZumbaRegistration() {
                     </p>
                   </div>
 
+                  <div className="rounded-lg border border-purple-100 bg-purple-50/40 px-2.5 py-2 text-xs font-medium text-purple-800 shadow-sm">
+                    💡 Click a card to flip and see the criteria
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
-                    {contestCategories.map(category => (
+                    {contestCategories.map(category => {
+                      const isFlipped = !!flippedCards[category.title];
+
+                      return (
+                        <button
+                          key={category.title}
+                          type="button"
+                          onClick={() =>
+                            setFlippedCards(prev => ({
+                              ...prev,
+                              [category.title]: !prev[category.title],
+                            }))
+                          }
+                          className="relative h-full min-h-[62px] w-full text-left cursor-pointer [perspective:1000px]"
+                        >
+                          <div
+                            className={`relative h-full w-full rounded-lg transition-transform duration-600 [transform-style:preserve-3d] ${
+                              isFlipped ? "[transform:rotateY(180deg)]" : ""
+                            }`}
+                          >
+                            <div className="absolute inset-0 flex items-center rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm [backface-visibility:hidden]">
+                              <span className="mr-2 text-base flex-shrink-0" aria-hidden="true">
+                                ⭐
+                              </span>
+                              <span className="line-clamp-2">{category.title}</span>
+                            </div>
+
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-blue-200 bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2.5 text-center text-white shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                              <span className="text-[11px] font-medium leading-tight">
+                                {category.criteria}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFlippedCards(prev => ({
+                          ...prev,
+                          [centeredContestCategory.title]: !prev[centeredContestCategory.title],
+                        }))
+                      }
+                      className="sm:col-span-2 lg:col-start-2 lg:col-span-1 relative h-full min-h-[62px] w-full text-left cursor-pointer [perspective:1000px]"
+                    >
                       <div
-                        key={category}
-                        className="flex items-center rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm"
+                        className={`relative h-full w-full rounded-lg transition-transform duration-600 [transform-style:preserve-3d] ${
+                          flippedCards[centeredContestCategory.title]
+                            ? "[transform:rotateY(180deg)]"
+                            : ""
+                        }`}
                       >
-                        <span className="mr-2 text-base" aria-hidden="true">
-                          ⭐
-                        </span>
-                        <span>{category}</span>
+                        <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm [backface-visibility:hidden]">
+                          <span className="mr-2 text-base flex-shrink-0" aria-hidden="true">
+                            ⭐
+                          </span>
+                          <span className="line-clamp-2">{centeredContestCategory.title}</span>
+                        </div>
+
+                        <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-blue-200 bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2.5 text-center text-white shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                          <span className="text-[11px] font-medium leading-tight">
+                            {centeredContestCategory.criteria}
+                          </span>
+                        </div>
                       </div>
-                    ))}
+                    </button>
                   </div>
                 </div>
 
