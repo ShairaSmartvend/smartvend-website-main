@@ -89,7 +89,13 @@ export function ZumbaRegistration() {
     },
     {
       title: "Social Media Star",
-      criteria: "Most creative shot uploaded to Facebook using the hashtag \n #Zumba-FitbyCleanIt.",
+      criteria: (
+        <>
+          Most creative shot uploaded to Facebook using the hashtag
+          <br />
+          #Zumba-FitbyCleanIt.
+        </>
+      ),
     },
   ];
 
