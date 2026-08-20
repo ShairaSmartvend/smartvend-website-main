@@ -477,7 +477,7 @@ export function ZumbaRegistration() {
                     <div>
                       <p className="text-xs text-gray-600 font-semibold">Date & Time</p>
                       <p className="text-sm text-gray-900">
-                        August 12, 2026 <br /> 9 AM onwards
+                        {/* August 12, 2026 <br /> 9 AM onwards */}
                       </p>
                     </div>
                   </div>
@@ -499,7 +499,7 @@ export function ZumbaRegistration() {
                     <div>
                       <p className="text-xs text-gray-600 font-semibold">Location</p>
                       <p className="text-sm text-gray-900">
-                        Ground Floor, Trade Hall, Robinsons Novaliches{" "}
+                        {/* Ground Floor, Trade Hall, Robinsons Novaliches{" "} */}
                       </p>
                     </div>
                   </div>
