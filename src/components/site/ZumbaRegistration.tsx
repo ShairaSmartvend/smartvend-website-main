@@ -43,9 +43,36 @@ export function ZumbaRegistration() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isCivilStatusOpen, setIsCivilStatusOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const gcashFileInputRef = useRef<HTMLInputElement>(null);
   const bankFileInputRef = useRef<HTMLInputElement>(null);
   const civilStatusRef = useRef<HTMLDivElement>(null);
+  const [registrationReference, setRegistrationReference] = useState<string | null>(null);
+
+  const focusFirstError = (formErrors: FormErrors) => {
+    const visualFieldOrder = [
+      "registrationPackage",
+      "firstName",
+      "lastName",
+      "birthday",
+      "email",
+      "phoneNumber",
+      "barangay",
+      "civilStatus",
+      "modeOfPayment",
+      "gcashProof",
+      "bankProof",
+    ];
+    const firstErrorName = visualFieldOrder.find(fieldName => formErrors[fieldName]);
+    const firstErrorField = formRef.current?.querySelector<HTMLElement>(
+      `[name="${firstErrorName}"]`,
+    );
+
+    if (firstErrorField) {
+      firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+      window.setTimeout(() => firstErrorField.focus(), 300);
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -196,7 +223,7 @@ export function ZumbaRegistration() {
       if (!file.type.startsWith("image/")) {
         setErrors(prev => ({
           ...prev,
-          [`${paymentType}Proof`]: "Please upload an image file (JPG, PNG, etc.)",
+          [`${paymentType}Proof`]: "Please upload a valid image file, such as JPG or PNG.",
         }));
         return;
       }
@@ -220,62 +247,65 @@ export function ZumbaRegistration() {
     const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName = "This field is required.";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName = "This field is required.";
     }
 
     if (!formData.birthday) {
-      newErrors.birthday = "Birthday is required";
+      newErrors.birthday = "This field is required.";
     } else {
       const birthDate = new Date(formData.birthday);
       const today = new Date();
       if (birthDate > today) {
-        newErrors.birthday = "Birthday cannot be in the future";
+        newErrors.birthday = "Please enter a valid date of birth.";
       }
     }
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = "This field is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.phoneNumber) {
-      newErrors.phoneNumber = "Phone number is required";
+      newErrors.phoneNumber = "This field is required.";
     } else if (formData.phoneNumber.length !== 11) {
-      newErrors.phoneNumber = "Phone number must be 11 digits";
+      newErrors.phoneNumber = "Please enter an 11-digit phone number.";
     } else if (!formData.phoneNumber.startsWith("09")) {
-      newErrors.phoneNumber = "Phone number must start with 09";
+      newErrors.phoneNumber = "Please enter a phone number beginning with 09.";
     }
 
     if (!formData.barangay.trim()) {
-      newErrors.barangay = "Barangay is required";
+      newErrors.barangay = "This field is required.";
     }
 
     if (!formData.civilStatus) {
-      newErrors.civilStatus = "Please select a civil status";
+      newErrors.civilStatus = "Please select your civil status.";
     }
 
     if (!formData.registrationPackage) {
-      newErrors.registrationPackage = "Please select a registration package";
+      newErrors.registrationPackage = "Please select a registration package.";
     }
 
     if (!formData.modeOfPayment) {
-      newErrors.modeOfPayment = "Please select a payment method";
+      newErrors.modeOfPayment = "Please select a payment method.";
     }
 
     if (formData.modeOfPayment === "gcash" && !formData.gcashProof) {
-      newErrors.gcashProof = "Please upload proof of GCash payment";
+      newErrors.gcashProof = "Please upload proof of GCash payment.";
     }
 
     if (formData.modeOfPayment === "bank-transfer" && !formData.bankProof) {
-      newErrors.bankProof = "Please upload proof of bank transfer";
+      newErrors.bankProof = "Please upload proof of bank transfer.";
     }
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      focusFirstError(newErrors);
+    }
     return Object.keys(newErrors).length === 0;
   };
 
@@ -294,18 +324,126 @@ export function ZumbaRegistration() {
       // In production, you would upload files and send data to your backend
       await new Promise(resolve => setTimeout(resolve, 1500));
 
+      // 1. CALCULATE AGE FROM BIRTHDAY
+      // ============================================
+      const birthDate = new Date(formData.birthday);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      const registrationFee = formData.registrationPackage === "vip" ? 190 : 109;
+
+      let paymentProof = "";
+      if (formData.modeOfPayment === "gcash" && formData.gcashProof) {
+        paymentProof = await fileToBase64(formData.gcashProof);
+      } else if (formData.modeOfPayment === "bank-transfer" && formData.bankProof) {
+        paymentProof = await fileToBase64(formData.bankProof);
+      }
+
+      const clientRegistrationReference = `ZUMBA-${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 7)
+        .toUpperCase()}`;
+
+      const jsonBody = {
+        // ID is auto-generated
+        registrationReference: clientRegistrationReference,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        birthday: formData.birthday, // Format: YYYY-MM-DD
+        age: age,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        barangay: formData.barangay,
+        instructorName: formData.instructorName || null,
+        civilStatus: formData.civilStatus || "single",
+        registrationPackage: formData.registrationPackage || "regular",
+        registrationFee: registrationFee,
+        paymentMethod: formData.modeOfPayment?.toUpperCase() || "UNSPECIFIED",
+        paymentProof: paymentProof,
+        paymentStatus: "PENDING",
+        registrationStatus: "PENDING",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const response = await fetch("http://localhost:8080/zumba/addRegistration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const fieldName = errorData.field || errorData.fieldName;
+        const knownFields = [
+          "firstName",
+          "lastName",
+          "birthday",
+          "email",
+          "phoneNumber",
+          "barangay",
+          "civilStatus",
+          "registrationPackage",
+          "modeOfPayment",
+          "gcashProof",
+          "bankProof",
+        ];
+
+        if (knownFields.includes(fieldName)) {
+          const fieldError = `Please review your ${fieldName.replace(/([A-Z])/g, " $1").toLowerCase()}.`;
+          const mappedErrors = { [fieldName]: fieldError };
+          setErrors(mappedErrors);
+          focusFirstError(mappedErrors);
+        }
+
+        throw new Error("Registration request failed");
+      }
+
+      const result = await response.json();
+      console.log("Registration successful:", result);
+
+      const returnedRegistrationReference =
+        typeof result === "string"
+          ? result
+          : result?.registrationReference ||
+            result?.data?.registrationReference ||
+            result?.result?.registrationReference;
+
+      setRegistrationReference(returnedRegistrationReference);
+
       // Here you would typically:
       // 1. Upload files to a storage service (AWS S3, Firebase, etc.)
       // 2. Send form data to your backend
       // 3. Handle the response
 
+      //send a json to http://localhost:8080/zumba/addRegistration
+      //json body should be in the same pattern with ZumbaFitfile
+      //method should be post
+
       setIsSubmitted(true);
     } catch (error) {
-      setSubmitError("An error occurred while submitting the form. Please try again.");
+      setSubmitError(
+        "We were unable to complete your registration. Please review the information provided and try again.",
+      );
       console.error("Form submission error:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
   };
 
   const registrationFee = formData.registrationPackage
@@ -316,25 +454,44 @@ export function ZumbaRegistration() {
     return (
       <div className="bg-linear-to-br from-purple-900 via-blue-900 to-purple-800 flex items-center justify-center px-4 py-12 min-h-screen">
         <div className="max-w-md w-full bg-white rounded-2xl p-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="rounded-full bg-green-100 p-4">
-              <CheckCircle2 className="w-12 h-12 text-green-600" />
+          <div className="relative mb-6 overflow-hidden rounded-2xl px-2 py-5">
+            <div className="confetti" aria-hidden="true">
+              {Array.from({ length: 18 }, (_, index) => (
+                <span key={index} />
+              ))}
             </div>
+            <h2 className="relative text-2xl font-bold text-gray-900 -mt-2">
+              Registration Successful!
+            </h2>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-8 -mt-3">
             Thank you for pre-registering for Zumba Fit by CleanIt. We look forward to seeing you at
             the event!
           </p>
-          <div className="bg-purple-50 rounded-lg p-4 mb-6 text-left">
-            <p className="text-sm text-gray-600 mb-2">
-              <span className="font-semibold text-gray-900">Registration Package:</span>{" "}
-              {formData.registrationPackage === "regular" ? "Regular" : "VIP"}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Name:</span> {formData.firstName}{" "}
-              {formData.lastName}
-            </p>
+          <div className="mb-6 overflow-hidden rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50 via-white to-blue-50 text-left shadow-sm">
+            <div className="flex items-center justify-between border-b border-purple-100 px-5 py-4">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-purple-700">
+                Registration confirmed
+              </p>
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+            </div>
+            <div className="px-5 py-5">
+              <p className="text-center text-2xl font-bold text-gray-600 mb-2 -mt-2">
+                <span className="font-semibold text-gray-900"></span>{" "}
+                {formData.registrationPackage === "regular" ? "Regular" : "VIP"}
+              </p>
+              <p className="text-sm text-gray-600 mb-5">
+                <span className="font-semibold text-gray-900">Name:</span> {formData.firstName}{" "}
+                {formData.lastName}
+              </p>
+              <div className="rounded-xl border-2 border-dashed border-purple-400 bg-white px-4 py-5 text-center shadow-sm">
+                <p className="mb-2 text-sm font-semibold text-gray-600">Your Raffle Number</p>
+                <p className="break-all text-3xl font-black tracking-[0.12em] text-purple-800">
+                  {registrationReference}
+                </p>
+                <p className="mt-2 text-xs text-gray-500">Please save this number for the event.</p>
+              </div>
+            </div>
           </div>
           <button
             onClick={() => {
@@ -447,9 +604,9 @@ export function ZumbaRegistration() {
 
           {/* Form Content */}
           <div className="p-6 sm:p-8 md:p-10">
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
               {submitError && (
-                <Alert variant="destructive">
+                <Alert className="border-[#B42318] bg-[#FEF3F2] text-[#B42318]" role="alert">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{submitError}</AlertDescription>
                 </Alert>
@@ -563,7 +720,12 @@ export function ZumbaRegistration() {
                   {/* Regular Package */}
                   <button
                     type="button"
+                    name="registrationPackage"
                     onClick={() => handlePackageSelect("regular")}
+                    aria-invalid={!!errors.registrationPackage}
+                    aria-describedby={
+                      errors.registrationPackage ? "registrationPackage-error" : undefined
+                    }
                     className={`p-5 sm:p-6 rounded-xl border-2 transition-all duration-300 text-left ${
                       formData.registrationPackage === "regular"
                         ? "border-purple-600 bg-purple-50"
@@ -591,6 +753,10 @@ export function ZumbaRegistration() {
                       <li className="flex items-start">
                         <span className="text-purple-600 mr-2 font-bold">•</span>
                         <span>Tote Bag</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Key Chain</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-purple-600 mr-2 font-bold">•</span>
@@ -622,7 +788,12 @@ export function ZumbaRegistration() {
                   {/* VIP Package */}
                   <button
                     type="button"
+                    name="registrationPackage"
                     onClick={() => handlePackageSelect("vip")}
+                    aria-invalid={!!errors.registrationPackage}
+                    aria-describedby={
+                      errors.registrationPackage ? "registrationPackage-error" : undefined
+                    }
                     className={`p-5 sm:p-6 rounded-xl border-2 transition-all duration-300 text-left ${
                       formData.registrationPackage === "vip"
                         ? "border-blue-600 bg-blue-50"
@@ -650,6 +821,10 @@ export function ZumbaRegistration() {
                       <li className="flex items-start">
                         <span className="text-blue-600 mr-2 font-bold">•</span>
                         <span>Tote Bag</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-600 mr-2 font-bold">•</span>
+                        <span>Key Chain</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-blue-600 mr-2 font-bold">•</span>
@@ -775,7 +950,9 @@ export function ZumbaRegistration() {
                   </div>
                 </div>
                 {errors.registrationPackage && (
-                  <p className="text-red-600 text-sm font-medium">{errors.registrationPackage}</p>
+                  <p id="registrationPackage-error" className="text-[#B42318] text-sm font-medium">
+                    {errors.registrationPackage}
+                  </p>
                 )}
               </div>
 
@@ -796,14 +973,18 @@ export function ZumbaRegistration() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       placeholder="Enter your first name"
+                      aria-invalid={!!errors.firstName}
+                      aria-describedby={errors.firstName ? "firstName-error" : undefined}
                       className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
                         errors.firstName
-                          ? "border-red-500 bg-red-50"
+                          ? "border-[#B42318] bg-[#FEF3F2]"
                           : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                       } outline-none`}
                     />
                     {errors.firstName && (
-                      <p className="text-red-600 text-sm font-medium mt-1">{errors.firstName}</p>
+                      <p id="firstName-error" className="text-[#B42318] text-sm font-medium mt-1">
+                        {errors.firstName}
+                      </p>
                     )}
                   </div>
 
@@ -818,14 +999,18 @@ export function ZumbaRegistration() {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       placeholder="Enter your last name"
+                      aria-invalid={!!errors.lastName}
+                      aria-describedby={errors.lastName ? "lastName-error" : undefined}
                       className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
                         errors.lastName
-                          ? "border-red-500 bg-red-50"
+                          ? "border-[#B42318] bg-[#FEF3F2]"
                           : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                       } outline-none`}
                     />
                     {errors.lastName && (
-                      <p className="text-red-600 text-sm font-medium mt-1">{errors.lastName}</p>
+                      <p id="lastName-error" className="text-[#B42318] text-sm font-medium mt-1">
+                        {errors.lastName}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -841,14 +1026,18 @@ export function ZumbaRegistration() {
                     value={formData.birthday}
                     onChange={handleInputChange}
                     max={new Date().toISOString().split("T")[0]}
+                    aria-invalid={!!errors.birthday}
+                    aria-describedby={errors.birthday ? "birthday-error" : undefined}
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black ${
                       errors.birthday
-                        ? "border-red-500 bg-red-50"
+                        ? "border-[#B42318] bg-[#FEF3F2]"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
                   {errors.birthday && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.birthday}</p>
+                    <p id="birthday-error" className="text-[#B42318] text-sm font-medium mt-1">
+                      {errors.birthday}
+                    </p>
                   )}
                 </div>
 
@@ -871,14 +1060,18 @@ export function ZumbaRegistration() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Enter your email address"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
                       errors.email
-                        ? "border-red-500 bg-red-50"
+                        ? "border-[#B42318] bg-[#FEF3F2]"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
                   {errors.email && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.email}</p>
+                    <p id="email-error" className="text-[#B42318] text-sm font-medium mt-1">
+                      {errors.email}
+                    </p>
                   )}
                 </div>
 
@@ -894,15 +1087,19 @@ export function ZumbaRegistration() {
                     onChange={handleInputChange}
                     placeholder="09XXXXXXXXX"
                     inputMode="numeric"
+                    aria-invalid={!!errors.phoneNumber}
+                    aria-describedby={errors.phoneNumber ? "phoneNumber-error" : undefined}
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
                       errors.phoneNumber
-                        ? "border-red-500 bg-red-50"
+                        ? "border-[#B42318] bg-[#FEF3F2]"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
                   <p className="text-xs text-gray-500 mt-1">Format: 09XXXXXXXXX (11 digits)</p>
                   {errors.phoneNumber && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.phoneNumber}</p>
+                    <p id="phoneNumber-error" className="text-[#B42318] text-sm font-medium mt-1">
+                      {errors.phoneNumber}
+                    </p>
                   )}
                 </div>
 
@@ -917,14 +1114,18 @@ export function ZumbaRegistration() {
                     value={formData.barangay}
                     onChange={handleInputChange}
                     placeholder="Enter your barangay"
+                    aria-invalid={!!errors.barangay}
+                    aria-describedby={errors.barangay ? "barangay-error" : undefined}
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black placeholder-gray-400 ${
                       errors.barangay
-                        ? "border-red-500 bg-red-50"
+                        ? "border-[#B42318] bg-[#FEF3F2]"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                     } outline-none`}
                   />
                   {errors.barangay && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.barangay}</p>
+                    <p id="barangay-error" className="text-[#B42318] text-sm font-medium mt-1">
+                      {errors.barangay}
+                    </p>
                   )}
                 </div>
 
@@ -936,10 +1137,13 @@ export function ZumbaRegistration() {
                   <div className="relative">
                     <button
                       type="button"
+                      name="civilStatus"
                       onClick={() => setIsCivilStatusOpen(!isCivilStatusOpen)}
+                      aria-invalid={!!errors.civilStatus}
+                      aria-describedby={errors.civilStatus ? "civilStatus-error" : undefined}
                       className={`w-full px-4 py-2 pr-10 rounded-lg border-2 transition-colors text-black text-left appearance-none cursor-pointer ${
                         errors.civilStatus
-                          ? "border-red-500 bg-red-50"
+                          ? "border-[#B42318] bg-[#FEF3F2]"
                           : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
                       } outline-none focus:border-purple-500 focus:bg-white`}
                     >
@@ -989,7 +1193,9 @@ export function ZumbaRegistration() {
                     )}
                   </div>
                   {errors.civilStatus && (
-                    <p className="text-red-600 text-sm font-medium mt-1">{errors.civilStatus}</p>
+                    <p id="civilStatus-error" className="text-[#B42318] text-sm font-medium mt-1">
+                      {errors.civilStatus}
+                    </p>
                   )}
                 </div>
 
@@ -1017,7 +1223,10 @@ export function ZumbaRegistration() {
                     <button
                       key={method}
                       type="button"
+                      name="modeOfPayment"
                       onClick={() => handlePaymentMethodSelect(method as "gcash" | "bank-transfer")}
+                      aria-invalid={!!errors.modeOfPayment}
+                      aria-describedby={errors.modeOfPayment ? "modeOfPayment-error" : undefined}
                       className={`p-3 sm:p-4 rounded-lg border-2 font-semibold transition-all text-sm sm:text-base ${
                         formData.modeOfPayment === method
                           ? "border-purple-600 bg-purple-50 text-purple-900"
@@ -1030,7 +1239,9 @@ export function ZumbaRegistration() {
                   ))}
                 </div>
                 {errors.modeOfPayment && (
-                  <p className="text-red-600 text-sm font-medium">{errors.modeOfPayment}</p>
+                  <p id="modeOfPayment-error" className="text-[#B42318] text-sm font-medium">
+                    {errors.modeOfPayment}
+                  </p>
                 )}
 
                 {/* GCash Payment */}
@@ -1088,12 +1299,20 @@ export function ZumbaRegistration() {
                       <input
                         ref={gcashFileInputRef}
                         type="file"
+                        name="gcashProof"
                         accept="image/*"
                         onChange={e => handleFileChange(e, "gcash")}
+                        aria-invalid={!!errors.gcashProof}
+                        aria-describedby={errors.gcashProof ? "gcashProof-error" : undefined}
                         className="hidden"
                       />
                       {errors.gcashProof && (
-                        <p className="text-red-600 text-sm font-medium mt-2">{errors.gcashProof}</p>
+                        <p
+                          id="gcashProof-error"
+                          className="text-[#B42318] text-sm font-medium mt-2"
+                        >
+                          {errors.gcashProof}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1163,12 +1382,17 @@ export function ZumbaRegistration() {
                       <input
                         ref={bankFileInputRef}
                         type="file"
+                        name="bankProof"
                         accept="image/*"
                         onChange={e => handleFileChange(e, "bank")}
+                        aria-invalid={!!errors.bankProof}
+                        aria-describedby={errors.bankProof ? "bankProof-error" : undefined}
                         className="hidden"
                       />
                       {errors.bankProof && (
-                        <p className="text-red-600 text-sm font-medium mt-2">{errors.bankProof}</p>
+                        <p id="bankProof-error" className="text-[#B42318] text-sm font-medium mt-2">
+                          {errors.bankProof}
+                        </p>
                       )}
                     </div>
                   </div>
