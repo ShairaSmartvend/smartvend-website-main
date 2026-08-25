@@ -370,13 +370,16 @@ export function ZumbaRegistration() {
         updatedAt: new Date().toISOString(),
       };
 
-      const response = await fetch("http://localhost:8080/zumba/addRegistration", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jsonBody),
         },
-        body: JSON.stringify(jsonBody),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
