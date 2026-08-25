@@ -145,6 +145,31 @@ export function ZumbaRegistration() {
     return age;
   };
 
+  const getBirthdayError = (birthday: string): string | null => {
+    if (!birthday) {
+      return "This field is required.";
+    }
+
+    const birthDate = new Date(`${birthday}T00:00:00`);
+    const [year, month, day] = birthday.split("-").map(Number);
+    const birthYear = year;
+    const isValidCalendarDate =
+      birthDate.getFullYear() === year &&
+      birthDate.getMonth() === month - 1 &&
+      birthDate.getDate() === day;
+
+    if (
+      Number.isNaN(birthDate.getTime()) ||
+      !isValidCalendarDate ||
+      birthYear < 1926 ||
+      birthYear > 2025
+    ) {
+      return "Please enter a valid date of birth from 1926 through 2025.";
+    }
+
+    return null;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -156,12 +181,24 @@ export function ZumbaRegistration() {
       }
     } else if (name === "birthday") {
       setFormData(prev => ({ ...prev, birthday: value }));
+      setErrors(prev => {
+        const birthdayError = getBirthdayError(value);
+        const newErrors = { ...prev };
+
+        if (!birthdayError) {
+          delete newErrors.birthday;
+        } else {
+          newErrors.birthday = birthdayError;
+        }
+
+        return newErrors;
+      });
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
 
     // Clear error for this field when user starts typing
-    if (errors[name]) {
+    if (name !== "birthday" && errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[name];
@@ -254,14 +291,9 @@ export function ZumbaRegistration() {
       newErrors.lastName = "This field is required.";
     }
 
-    if (!formData.birthday) {
-      newErrors.birthday = "This field is required.";
-    } else {
-      const birthDate = new Date(formData.birthday);
-      const today = new Date();
-      if (birthDate > today) {
-        newErrors.birthday = "Please enter a valid date of birth.";
-      }
+    const birthdayError = getBirthdayError(formData.birthday);
+    if (birthdayError) {
+      newErrors.birthday = birthdayError;
     }
 
     if (!formData.email) {
@@ -1028,7 +1060,8 @@ export function ZumbaRegistration() {
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    max={new Date().toISOString().split("T")[0]}
+                    min="1926-01-01"
+                    max="2025-12-31"
                     aria-invalid={!!errors.birthday}
                     aria-describedby={errors.birthday ? "birthday-error" : undefined}
                     className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black ${
