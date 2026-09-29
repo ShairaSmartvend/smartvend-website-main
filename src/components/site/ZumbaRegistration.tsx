@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from "react";
+import Tesseract from "tesseract.js";
 import { AlertCircle, CheckCircle2, Upload, Loader2, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import modgcashQR from "@/assets/modgcash.jpg";
+import playStoreBadge from "@/assets/Playstore.png";
+import appStoreBadge from "@/assets/appstore.png";
 
 interface RegistrationFormData {
   firstName: string;
@@ -16,6 +19,8 @@ interface RegistrationFormData {
   modeOfPayment: "gcash" | "bank-transfer" | null;
   gcashProof: File | null;
   bankProof: File | null;
+  paymentReference: string;
+  paymentDate: string | null;
 }
 
 interface FormErrors {
@@ -36,9 +41,13 @@ export function ZumbaRegistration() {
     modeOfPayment: null,
     gcashProof: null,
     bankProof: null,
+    paymentReference: "",
+    paymentDate: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [paymentProofDate, setPaymentProofDate] = useState<string | null>(null);
+  const [paymentProofAmountCents, setPaymentProofAmountCents] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -92,6 +101,25 @@ export function ZumbaRegistration() {
     regular: 109,
     vip: 190,
   };
+  const paymentProofDateRange = {
+    start: "2026-05-29",
+    end: "2026-10-11",
+  };
+  const formatPaymentProofDate = (date: string | null) =>
+    date
+      ? new Date(`${date}T00:00:00`).toLocaleDateString("en-PH", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })
+      : "Not detected";
+  const formatPaymentProofAmount = (amountCents: number | null) =>
+    amountCents === null
+      ? "Not detected"
+      : `₱${(amountCents / 100).toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
 
   const contestCategories = [
     {
@@ -158,13 +186,20 @@ export function ZumbaRegistration() {
       birthDate.getMonth() === month - 1 &&
       birthDate.getDate() === day;
 
-    if (
-      Number.isNaN(birthDate.getTime()) ||
-      !isValidCalendarDate ||
-      birthYear < 1926 ||
-      birthYear > 2025
-    ) {
-      return "Please enter a valid date of birth from 1926 through 2025.";
+    if (Number.isNaN(birthDate.getTime()) || !isValidCalendarDate) {
+      return "Please enter a valid date of birth.";
+    }
+
+    if (birthYear <= 1925) {
+      return "Birth year 1925 and below is not accepted.";
+    }
+
+    const today = new Date();
+    const minimumAgeDate = new Date(today);
+    minimumAgeDate.setFullYear(today.getFullYear() - 16);
+
+    if (birthDate > minimumAgeDate) {
+      return "You must be at least 16 years old to register.";
     }
 
     return null;
@@ -231,13 +266,338 @@ export function ZumbaRegistration() {
     }
   };
 
+  const extractPaymentProofDetails = (text: string) => {
+    const lines = text.replace(/\r\n?/g, "\n").split("\n").map(line => line.trim());
+    const referenceLineIndex = lines.findIndex(line =>
+      /\b(?:ref(?:erence)?|transaction|txn|trans(?:action)?)\b/i.test(line),
+    );
+    const orderedLines = lines
+      .map((line, index) => ({
+        line,
+        distance: referenceLineIndex < 0 ? index : Math.abs(index - referenceLineIndex),
+      }))
+      .filter(({ line }) => line)
+      .sort((first, second) => first.distance - second.distance);
+
+    const monthNumbers: Record<string, number> = {
+      jan: 1,
+      feb: 2,
+      mar: 3,
+      apr: 4,
+      may: 5,
+      jun: 6,
+      jul: 7,
+      aug: 8,
+      sep: 9,
+      sept: 9,
+      oct: 10,
+      nov: 11,
+      dec: 12,
+    };
+    const validIsoDate = (year: number, month: number, day: number) => {
+      const date = new Date(Date.UTC(year, month - 1, day));
+      if (
+        date.getUTCFullYear() !== year ||
+        date.getUTCMonth() !== month - 1 ||
+        date.getUTCDate() !== day
+      ) {
+        return null;
+      }
+      return `${year.toString().padStart(4, "0")}-${month.toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}`;
+    };
+
+    const parseDateFromLine = (line: string) => {
+      const monthNameMatch = line.match(
+        /\b(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)\.?\s+(\d{1,2})(?:st|nd|rd|th)?[,]?\s+(\d{2,4})\b/i,
+      );
+      if (monthNameMatch) {
+        const month =
+          monthNumbers[monthNameMatch[1].slice(0, 4).toLowerCase()] ??
+          monthNumbers[monthNameMatch[1].slice(0, 3).toLowerCase()];
+        let year = Number(monthNameMatch[3]);
+        if (year < 100) year += 2000;
+        return month ? validIsoDate(year, month, Number(monthNameMatch[2])) : null;
+      }
+
+      const dayMonthNameMatch = line.match(
+        /\b(\d{1,2})(?:st|nd|rd|th)?\s+(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)\.?[,]?\s+(\d{2,4})\b/i,
+      );
+      if (dayMonthNameMatch) {
+        const month =
+          monthNumbers[dayMonthNameMatch[2].slice(0, 4).toLowerCase()] ??
+          monthNumbers[dayMonthNameMatch[2].slice(0, 3).toLowerCase()];
+        let year = Number(dayMonthNameMatch[3]);
+        if (year < 100) year += 2000;
+        return month ? validIsoDate(year, month, Number(dayMonthNameMatch[1])) : null;
+      }
+
+      const isoMatch = line.match(/\b((?:19|20)\d{2})[-/.](\d{1,2})[-/.](\d{1,2})\b/);
+      if (isoMatch) {
+        return validIsoDate(Number(isoMatch[1]), Number(isoMatch[2]), Number(isoMatch[3]));
+      }
+
+      const numericMatch = line.match(/\b(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})\b/);
+      if (!numericMatch) return null;
+
+      let year = Number(numericMatch[3]);
+      if (year < 100) year += 2000;
+      const first = Number(numericMatch[1]);
+      const second = Number(numericMatch[2]);
+      const candidates =
+        first > 12
+          ? [[year, second, first]]
+          : second > 12
+            ? [[year, first, second]]
+            : [[year, first, second], [year, second, first]];
+      const parsedCandidates = candidates
+        .map(([candidateYear, month, day]) => validIsoDate(candidateYear, month, day))
+        .filter((date): date is string => date !== null);
+
+      return (
+        parsedCandidates.find(
+          date => date >= paymentProofDateRange.start && date <= paymentProofDateRange.end,
+        ) ??
+        parsedCandidates[0] ??
+        null
+      );
+    };
+
+    let date: string | null = null;
+    for (const { line } of orderedLines) {
+      date = parseDateFromLine(line);
+      if (date) break;
+    }
+
+    const amountPattern =
+      /\b(?:total\s+amount\s+sent|amount(?:\s+(?:sent|paid|transferred))?|total\s+paid)\b[^\d]{0,24}(?:₱|PHP\s*)?\s*([\d,]+(?:\.\d{1,2})?)/i;
+    const labeledAmount = text.match(amountPattern);
+    const currencyAmount = text.match(/(?:₱|\bPHP\s*)\s*([\d,]+(?:\.\d{1,2})?)/i);
+    const rawAmount = labeledAmount?.[1] ?? currencyAmount?.[1] ?? null;
+    const amountCents = rawAmount
+      ? Math.round(Number(rawAmount.replace(/,/g, "")) * 100)
+      : null;
+
+    return { date, amountCents: Number.isFinite(amountCents) ? amountCents : null };
+  };
+
+  const extractReferenceFromText = (
+    text: string,
+    method: "gcash" | "bank-transfer",
+    blocks: Tesseract.Block[] | null = null,
+  ) => {
+    const lines = text.replace(/\r\n?/g, "\n").split("\n").map(line => line.trim());
+    for (let index = 0; index < lines.length - 1; index++) {
+      if (
+        /\b(?:ref(?:erence)?|transaction|txn|trans(?:action)?)\s*$/i.test(lines[index]) &&
+        /^(?:no|num|number|id)\b[.:#-]?/i.test(lines[index + 1])
+      ) {
+        lines[index] = `${lines[index]} ${lines[index + 1]}`;
+        lines.splice(index + 1, 1);
+      }
+    }
+    const referenceLabelPattern =
+      /\b(?:ref(?:erence)?(?:\s*(?:no|num|number))?)\b\s*[:#.|-]*/i;
+    const transactionLabelPattern =
+      /\b(?:transaction(?:\s*(?:id|no|num|number))?|txn(?:\s*(?:id|no|num|number))?|trans(?:action)?(?:\s*(?:id|no|num|number))?)\b\s*[:#.|-]*/i;
+    const getLabelMatch = (value: string) => {
+      const referenceMatch = referenceLabelPattern.exec(value);
+      if (referenceMatch) return { match: referenceMatch, priority: 2 };
+      if (method === "gcash") return null;
+
+      const transactionMatch = transactionLabelPattern.exec(value);
+      return transactionMatch ? { match: transactionMatch, priority: 1 } : null;
+    };
+    const excludedLabels =
+      /\b(?:date|time|amount|total|thank|thanks|account|name|balance|status|phone|mobile|contact|sender|recipient|paid)\b/i;
+    const excludedValues = new Set([
+      "gcash", "bank", "transfer", "reference", "transaction", "txn", "ref", "receipt",
+    ]);
+    const isMetadataWord = (word: string) =>
+      /^(?:date|time|amount|total|thank|thanks|account|name|balance|status|phone|mobile|contact|sender|recipient|paid|php|peso|reference|ref|transaction|txn|receipt|gcash|bank|transfer|jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?|[ap]m|\$|₱|\d{1,2}:\d{2}|\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?|(?:19|20)\d{2}[/-]\d{1,2}[/-]\d{1,2})\b/i.test(
+        word.replace(/^[^A-Z0-9₱$]+/i, ""),
+      );
+    let bestReference: string | null = null;
+    let bestReferencePriority = 0;
+    const considerReference = (reference: string, priority: number) => {
+      const candidateLength = reference.replace(/[^A-Z0-9]/gi, "").length;
+      const currentLength = bestReference?.replace(/[^A-Z0-9]/gi, "").length ?? 0;
+      if (priority > bestReferencePriority || (priority === bestReferencePriority && candidateLength > currentLength)) {
+        bestReference = reference;
+        bestReferencePriority = priority;
+      }
+    };
+
+    if (blocks?.length) {
+      const ocrLines = blocks.flatMap(block =>
+        block.paragraphs.flatMap(paragraph => paragraph.lines.map(line => ({ line }))),
+      ).sort((first, second) => first.line.bbox.y0 - second.line.bbox.y0 || first.line.bbox.x0 - second.line.bbox.x0);
+
+      for (let lineIndex = 0; lineIndex < ocrLines.length; lineIndex++) {
+        const { line } = ocrLines[lineIndex];
+        const label = getLabelMatch(line.text);
+        if (!label) continue;
+        const { match: labelMatch, priority } = label;
+
+        let characterOffset = 0;
+        let labelWordIndex = -1;
+        for (let wordIndex = 0; wordIndex < line.words.length; wordIndex++) {
+          const word = line.words[wordIndex];
+          const wordEnd = characterOffset + word.text.length;
+          if (wordEnd >= labelMatch.index + labelMatch[0].length) {
+            labelWordIndex = wordIndex;
+            break;
+          }
+          characterOffset = wordEnd + 1;
+        }
+        if (labelWordIndex < 0) continue;
+
+        const referenceWords: string[] = [];
+        let referenceStartX = line.words[labelWordIndex].bbox.x1;
+        let metadataStartX: number | null = null;
+        for (let wordIndex = labelWordIndex + 1; wordIndex < line.words.length; wordIndex++) {
+          const word = line.words[wordIndex];
+          if (isMetadataWord(word.text)) {
+            metadataStartX = word.bbox.x0;
+            break;
+          }
+          if (!referenceWords.length) referenceStartX = word.bbox.x0;
+          referenceWords.push(word.text);
+        }
+
+        const isReference = (words: string[]) => {
+          const firstWord = words[0]?.toLowerCase() ?? "";
+          return words.length > 0 && /[A-Z0-9]/i.test(words.join("")) && !excludedValues.has(firstWord);
+        };
+
+        let previousY = line.bbox.y1;
+        const lineHeight = Math.max(1, line.bbox.y1 - line.bbox.y0);
+        for (let nextIndex = lineIndex + 1; nextIndex < ocrLines.length; nextIndex++) {
+          const nextLine = ocrLines[nextIndex].line;
+          const verticalGap = nextLine.bbox.y0 - previousY;
+          const firstWord = nextLine.words[0];
+          if (!firstWord) continue;
+
+          const alignmentTolerance = Math.max(20, lineHeight * 1.5);
+          const sameVisualRow = nextLine.bbox.y0 < previousY - lineHeight * 0.4;
+
+          if (sameVisualRow) {
+            if (isMetadataWord(firstWord.text)) {
+              metadataStartX = Math.min(metadataStartX ?? firstWord.bbox.x0, firstWord.bbox.x0);
+              continue;
+            }
+
+            if (
+              firstWord.bbox.x0 < referenceStartX - alignmentTolerance ||
+              (metadataStartX !== null && firstWord.bbox.x0 >= metadataStartX - alignmentTolerance)
+            ) {
+              continue;
+            }
+          } else {
+            if (verticalGap > Math.max(24, lineHeight * 1.75)) break;
+            if (isMetadataWord(firstWord.text)) break;
+            if (Math.abs(firstWord.bbox.x0 - referenceStartX) > alignmentTolerance) break;
+          }
+
+          const previousWordCount = referenceWords.length;
+          for (const word of nextLine.words) {
+            if (isMetadataWord(word.text)) {
+              metadataStartX = word.bbox.x0;
+              break;
+            }
+            referenceWords.push(word.text);
+          }
+
+          if (referenceWords.length === previousWordCount) continue;
+          if (!sameVisualRow) previousY = nextLine.bbox.y1;
+        }
+
+        if (isReference(referenceWords)) considerReference(referenceWords.join(" "), priority);
+      }
+    }
+
+    const findReferenceValue = (value: string) => {
+      const metadataBoundary = /\s+(?=(?:date|time|amount|total|account|name|balance|status|phone|mobile|contact|sender|recipient|paid|php|peso|reference|ref|transaction|txn|receipt|gcash|bank|transfer|jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?|[ap]m)\b|[₱$]|\d{1,2}:\d{2}|\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?)/i;
+      const boundaryIndex = value.search(metadataBoundary);
+      const referenceValue = (boundaryIndex < 0 ? value : value.slice(0, boundaryIndex)).trim();
+      const firstToken = referenceValue.split(/\s+/)[0]?.toLowerCase() ?? "";
+
+      if (!referenceValue || !/[A-Z0-9]/i.test(referenceValue) || excludedValues.has(firstToken)) {
+        return null;
+      }
+
+      return referenceValue;
+    };
+
+    const appendReferenceContinuation = (reference: string, startIndex: number) => {
+      let completeReference = reference;
+      for (let index = startIndex; index < lines.length; index++) {
+        const line = lines[index];
+        if (!line) continue;
+        if (getLabelMatch(line) || excludedLabels.test(line)) break;
+
+        const continuation = findReferenceValue(line);
+        if (!continuation || !/^\d[\d\s-]*$/.test(continuation)) break;
+        completeReference = `${completeReference} ${continuation}`;
+      }
+
+      return completeReference;
+    };
+
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
+      const label = getLabelMatch(line);
+      if (!label) continue;
+      const { match: labelMatch, priority } = label;
+
+      const sameLineValue = findReferenceValue(line.slice(labelMatch.index + labelMatch[0].length));
+      if (sameLineValue) {
+        considerReference(appendReferenceContinuation(sameLineValue, index + 1), priority);
+      }
+
+      const nextLine = lines[index + 1] ?? "";
+      if (nextLine && !getLabelMatch(nextLine) && !excludedLabels.test(nextLine)) {
+        const nextLineValue = findReferenceValue(nextLine);
+        if (nextLineValue) {
+          considerReference(appendReferenceContinuation(nextLineValue, index + 2), priority);
+        }
+      }
+    }
+
+    return bestReference;
+  };
+
+  const validatePaymentProofText = (
+    text: string,
+    method: "gcash" | "bank-transfer",
+    blocks: Tesseract.Block[] | null = null,
+  ) => {
+    const extracted = extractReferenceFromText(text, method, blocks);
+    if (!extracted) {
+      return {
+        isValid: false,
+        message:
+          method === "gcash"
+            ? "We could not read a valid GCash Reference Number from the uploaded screenshot."
+            : "We could not read a valid Transaction ID/Number from the uploaded screenshot.",
+      };
+    }
+
+    return { isValid: true, extractedValue: extracted };
+  };
+
   const handlePaymentMethodSelect = (method: "gcash" | "bank-transfer") => {
     setFormData(prev => ({
       ...prev,
       modeOfPayment: method,
       gcashProof: null,
       bankProof: null,
+      paymentReference: "",
+      paymentDate: null,
     }));
+    setPaymentProofDate(null);
+    setPaymentProofAmountCents(null);
     if (errors.modeOfPayment) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -245,38 +605,118 @@ export function ZumbaRegistration() {
         return newErrors;
       });
     }
-    // Reset file inputs
     if (gcashFileInputRef.current) gcashFileInputRef.current.value = "";
     if (bankFileInputRef.current) bankFileInputRef.current.value = "";
   };
 
-  const handleFileChange = (
+  const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     paymentType: "gcash" | "bank",
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setErrors(prev => ({
-          ...prev,
-          [`${paymentType}Proof`]: "Please upload a valid image file, such as JPG or PNG.",
-        }));
+    if (!file) return;
+
+    const method = paymentType === "gcash" ? "gcash" : "bank-transfer";
+    const fieldName = paymentType === "gcash" ? "gcashProof" : "bankProof";
+
+    if (!file.type.startsWith("image/")) {
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]: "Please upload a valid image file, such as JPG or PNG.",
+      }));
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]: "Please upload a payment screenshot smaller than 10MB.",
+      }));
+      return;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      paymentReference: "",
+      paymentDate: null,
+      gcashProof: paymentType === "gcash" ? file : null,
+      bankProof: paymentType === "bank" ? file : null,
+    }));
+    setPaymentProofDate(null);
+    setPaymentProofAmountCents(null);
+
+    try {
+      setErrors(prev => {
+        const nextErrors = { ...prev };
+        delete nextErrors[fieldName];
+        return nextErrors;
+      });
+
+      const firstPass = await Tesseract.recognize(file, "eng");
+      let parsedText = firstPass.data?.text ?? "";
+      let validation = validatePaymentProofText(parsedText, method, firstPass.data.blocks);
+
+      if (!validation.isValid || !validation.extractedValue) {
+        try {
+          const bitmap = await createImageBitmap(file);
+          try {
+            const scale = Math.min(2, 4000 / Math.max(bitmap.width, bitmap.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+            const context = canvas.getContext("2d");
+
+            if (context) {
+              context.filter = "grayscale(1) contrast(1.5)";
+              context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+              const retryPass = await Tesseract.recognize(canvas, "eng");
+              const retryText = retryPass.data?.text ?? "";
+              const retryValidation = validatePaymentProofText(
+                retryText,
+                method,
+                retryPass.data.blocks,
+              );
+
+              if (retryValidation.isValid && retryValidation.extractedValue) {
+                parsedText = retryText;
+                validation = retryValidation;
+              } else {
+                parsedText = `${parsedText}\n${retryText}`;
+                validation = validatePaymentProofText(parsedText, method);
+              }
+            }
+          } finally {
+            bitmap.close();
+          }
+        } catch {
+          // Keep the original OCR result if the enhanced retry cannot run.
+        }
+      }
+
+      const proofDetails = extractPaymentProofDetails(parsedText);
+      setPaymentProofDate(proofDetails.date);
+      setPaymentProofAmountCents(proofDetails.amountCents);
+      setFormData(prev => ({ ...prev, paymentDate: proofDetails.date }));
+
+      if (!validation.isValid || !validation.extractedValue) {
+        setErrors(prev => ({ ...prev, [fieldName]: validation.message }));
         return;
       }
 
-      if (paymentType === "gcash") {
-        setFormData(prev => ({ ...prev, gcashProof: file }));
-      } else {
-        setFormData(prev => ({ ...prev, bankProof: file }));
-      }
-
-      // Clear error for this field
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[`${paymentType}Proof`];
-        return newErrors;
-      });
+      setFormData(prev => ({
+        ...prev,
+        paymentReference: validation.extractedValue,
+      }));
+    } catch {
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]:
+          method === "gcash"
+            ? "Unable to validate the GCash screenshot. Please upload a readable payment image."
+            : "Unable to validate the bank transfer screenshot. Please upload a readable payment image.",
+      }));
+      setFormData(prev => ({ ...prev, paymentReference: "", paymentDate: null }));
     }
   };
 
@@ -334,11 +774,86 @@ export function ZumbaRegistration() {
       newErrors.bankProof = "Please upload proof of bank transfer.";
     }
 
+    if (formData.modeOfPayment && (formData.gcashProof || formData.bankProof)) {
+      const proofField = formData.modeOfPayment === "gcash" ? "gcashProof" : "bankProof";
+      if (
+        !paymentProofDate ||
+        paymentProofDate < paymentProofDateRange.start ||
+        paymentProofDate > paymentProofDateRange.end
+      ) {
+        newErrors[proofField] = "Payment proof must be dated Sept. 29–Oct. 11, 2026.";
+    } else if (
+  formData.registrationPackage &&
+  (paymentProofAmountCents === null ||
+    paymentProofAmountCents < packagePrices[formData.registrationPackage] * 100)
+) {
+  newErrors[proofField] =
+    formData.registrationPackage === "vip"
+      ? "Payment proof amount must be at least ₱190 (VIP fee)."
+      : "Payment proof amount must be at least ₱109 (Regular fee).";
+}
+    }
+
+  const referenceMissing =
+  typeof formData.paymentReference !== "string" ||
+  formData.paymentReference.trim().length === 0;
+
+if (formData.modeOfPayment && referenceMissing) {
+  newErrors[
+    formData.modeOfPayment === "gcash" ? "gcashProof" : "bankProof"
+  ] =
+    "We couldn't read a reference number. Please re-upload a clearer proof of payment.";
+}
+
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       focusFirstError(newErrors);
     }
     return Object.keys(newErrors).length === 0;
+  };
+
+  const normalizePhoneNumber = (value?: string | null) =>
+    value?.replace(/\D/g, "").replace(/^63(?=\d{10}$)/, "0") ?? "";
+
+  const checkForDuplicatePhone = async (): Promise<boolean> => {
+    const currentPhoneNumber = normalizePhoneNumber(formData.phoneNumber);
+    if (!currentPhoneNumber) return false;
+
+    try {
+      const cachedRegistrations = JSON.parse(localStorage.getItem("zumbaRegistrations") ?? "[]");
+      if (
+        Array.isArray(cachedRegistrations) &&
+        cachedRegistrations.some((entry: Record<string, unknown>) =>
+          normalizePhoneNumber(String(entry.phoneNumber ?? entry.phone_number ?? "")) ===
+          currentPhoneNumber,
+        )
+      ) {
+        return true;
+      }
+    } catch {
+      // Ignore local storage read issues and continue with the live check.
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/zumba/getRegistrations",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      if (!response.ok) return false;
+
+      const payload = await response.json().catch(() => null);
+      const registrations = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
+
+      return registrations.some((entry: Record<string, unknown>) =>
+        normalizePhoneNumber(String(entry.phoneNumber ?? entry.phone_number ?? "")) ===
+        currentPhoneNumber,
+      );
+    } catch {
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -349,9 +864,21 @@ export function ZumbaRegistration() {
       return;
     }
 
+    const paymentAmountCents = paymentProofAmountCents;
+    if (paymentAmountCents === null) {
+      setSubmitError("Payment amount could not be read from the proof of payment.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      if (await checkForDuplicatePhone()) {
+        setSubmitError("Phone number already registered.");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
       // Simulate form submission (replace with actual API call)
       // In production, you would upload files and send data to your backend
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -383,6 +910,8 @@ export function ZumbaRegistration() {
       const jsonBody = {
         // ID is auto-generated
         registrationReference: clientRegistrationReference,
+        paymentReference: formData.paymentReference,
+        payment_reference: formData.paymentReference,
         firstName: formData.firstName,
         lastName: formData.lastName,
         birthday: formData.birthday, // Format: YYYY-MM-DD
@@ -394,6 +923,9 @@ export function ZumbaRegistration() {
         civilStatus: formData.civilStatus || "single",
         registrationPackage: formData.registrationPackage || "regular",
         registrationFee: registrationFee,
+        paymentAmount: paymentAmountCents / 100,
+        paymentDate: formData.paymentDate,
+        payment_date: formData.paymentDate,
         paymentMethod: formData.modeOfPayment?.toUpperCase() || "UNSPECIFIED",
         paymentProof: paymentProof,
         paymentStatus: "PENDING",
@@ -401,6 +933,17 @@ export function ZumbaRegistration() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+
+      // const response = await fetch(
+      //   "http://localhost:8080/zumba/addRegistration",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(jsonBody),
+      //   },
+      // );
 
       const response = await fetch(
         "https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
@@ -414,8 +957,47 @@ export function ZumbaRegistration() {
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const fieldName = errorData.field || errorData.fieldName;
+        const responseText = await response.text().catch(() => "");
+        let errorData: Record<string, unknown> = {};
+        try {
+          const parsedError: unknown = JSON.parse(responseText);
+          if (parsedError && typeof parsedError === "object" && !Array.isArray(parsedError)) {
+            errorData = parsedError as Record<string, unknown>;
+          }
+        } catch {
+          // Use the plain response text below when the API does not return JSON.
+        }
+        const errorText = `${responseText} ${JSON.stringify(errorData)}`.toLowerCase();
+        const serverMessage = [errorData.message, errorData.error, errorData.detail].find(
+          (value): value is string => typeof value === "string" && value.trim().length > 0,
+        );
+
+        const isDuplicatePhone =
+          /(?:phone|mobile)(?:\s+number)?[^.\n]{0,50}(?:already registered|already exists|duplicate)|duplicate[^.\n]{0,50}(?:phone|mobile)/i.test(
+            errorText,
+          );
+        const isDuplicateRegistration =
+          /already registered|duplicate registration|registration.*already exists/i.test(errorText);
+
+        if (isDuplicatePhone || isDuplicateRegistration) {
+          if (isDuplicatePhone || (await checkForDuplicatePhone())) {
+            setSubmitError("Phone number already registered.");
+            return;
+          }
+
+          setSubmitError(
+            serverMessage ||
+              "The registration service rejected this registration. Please check the submitted details.",
+          );
+          return;
+        }
+
+        const fieldName =
+          typeof errorData.field === "string"
+            ? errorData.field
+            : typeof errorData.fieldName === "string"
+              ? errorData.fieldName
+              : "";
         const knownFields = [
           "firstName",
           "lastName",
@@ -437,7 +1019,11 @@ export function ZumbaRegistration() {
           focusFirstError(mappedErrors);
         }
 
-        throw new Error("Registration request failed");
+        const fallbackMessage = responseText.trim().startsWith("<") ? "" : responseText.trim();
+        throw new Error(
+          (serverMessage || fallbackMessage).slice(0, 240) ||
+            `Registration request failed (HTTP ${response.status}).`,
+        );
       }
 
       const result = await response.json();
@@ -452,6 +1038,23 @@ export function ZumbaRegistration() {
 
       setRegistrationReference(returnedRegistrationReference);
 
+      try {
+        const priorRegistrations = JSON.parse(localStorage.getItem("zumbaRegistrations") ?? "[]");
+        const storedRegistrations = Array.isArray(priorRegistrations) ? priorRegistrations : [];
+        storedRegistrations.push({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          birthday: formData.birthday,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          paymentReference: formData.paymentReference,
+          registeredAt: new Date().toISOString(),
+        });
+        localStorage.setItem("zumbaRegistrations", JSON.stringify(storedRegistrations));
+      } catch {
+        // Ignore local persistence failures.
+      }
+
       // Here you would typically:
       // 1. Upload files to a storage service (AWS S3, Firebase, etc.)
       // 2. Send form data to your backend
@@ -464,7 +1067,9 @@ export function ZumbaRegistration() {
       setIsSubmitted(true);
     } catch (error) {
       setSubmitError(
-        "We were unable to complete your registration. Please review the information provided and try again.",
+        error instanceof Error && error.message !== "Registration request failed"
+          ? error.message
+          : "We were unable to complete your registration. Please review the information provided and try again.",
       );
       console.error("Form submission error:", error);
     } finally {
@@ -499,8 +1104,8 @@ export function ZumbaRegistration() {
               Registration Successful!
             </h2>
           </div>
-          <p className="text-gray-600 mb-8 -mt-3">
-            Thank you for pre-registering for Zumba Fit by CleanIt. We look forward to seeing you at
+          <p className="text-gray-600 mb-8">
+            Thank you for registering for Zumba Fit by CleanIt. We look forward to seeing you at
             the event!
           </p>
           <div className="mb-6 overflow-hidden rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50 via-white to-blue-50 text-left shadow-sm">
@@ -544,7 +1149,11 @@ export function ZumbaRegistration() {
                 modeOfPayment: null,
                 gcashProof: null,
                 bankProof: null,
+                paymentReference: "",
+                paymentDate: null,
               });
+              setPaymentProofDate(null);
+              setPaymentProofAmountCents(null);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             className="w-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
@@ -552,53 +1161,60 @@ export function ZumbaRegistration() {
             Register Another Person
           </button>
 
-          {/* CleanIt App Promotion - small ad-like section */}
-          <div className="mt-6 pt-6 border-t border-gray-100 text-left">
-            <h3 className="text-sm font-semibold text-gray-700">
-              Want to experience more from CleanIt?
-            </h3>
-            <h4 className="text-lg font-bold text-gray-900 mt-1">Download the CleanIt App</h4>
-            <p className="text-sm text-gray-600 mt-2 mb-4">
-              Get the CleanIt mobile app and conveniently access CleanIt's services from your phone.
+          {/* CleanIt App Promotion - compact promotional section */}
+          <div className="mt-6 rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-purple-50 to-indigo-50 p-4 shadow-sm sm:p-5">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-purple-700">
+                  CleanIt App
+                </p>
+                <h3 className="mt-1 text-lg font-bold text-gray-900">
+                  Want to experience more from CleanIt?
+                </h3>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700 shadow-inner">
+                <span className="text-sm font-black">✦</span>
+              </div>
+            </div>
+
+            <p className="mb-4 text-sm leading-6 text-gray-600">
+              Get the CleanIt mobile app and conveniently access CleanIt&apos;s services from your
+              phone anytime, anywhere.
             </p>
 
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+            <div className="grid gap-3 sm:grid-cols-2">
               <a
                 href="https://play.google.com/store/apps/details?id=com.cleanit.activities"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-black text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
+                className="group flex items-center justify-center gap-3 rounded-xl bg-black px-3 py-3 text-white transition-transform duration-200 hover:-translate-y-0.5 hover:opacity-95 shadow-sm"
               >
-                {/* Android / Google Play icon (triangle) */}
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-7 h-7 flex-shrink-0"
-                  fill="currentColor"
-                  aria-hidden
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  <path d="M3 2.5L20 12 3 21.5V2.5z" />
-                </svg>
-                <span className="text-sm font-semibold">Download on Android</span>
+                <img
+                  src={playStoreBadge}
+                  alt="Google Play"
+                  className="h-8 w-auto object-contain"
+                />
+                <span className="text-left leading-tight">
+                  <span className="block text-[9px] font-medium uppercase tracking-[0.12em] text-white/70">
+                    Get it on
+                  </span>
+                  <span className="block text-sm font-semibold">Google Play</span>
+                </span>
               </a>
 
               <a
                 href="https://apps.apple.com/ph/app/clean-it-mobile-app/id6774019021"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-gray-900 text-white hover:opacity-95 transition-shadow shadow-sm md:max-w-[220px]"
+                className="group flex items-center justify-center gap-3 rounded-xl bg-gray-900 px-3 py-3 text-white transition-transform duration-200 hover:-translate-y-0.5 hover:opacity-95 shadow-sm"
               >
-                {/* Apple icon */}
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-9 h-9 flex-shrink-0"
-                  fill="currentColor"
-                  aria-hidden
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  <path d="M16.365 1.43c-.99.02-2.16.63-2.86 1.29-.79.74-1.47 1.98-1.23 3.15 1.3.1 2.66-.66 3.51-1.56.84-.9 1.23-2.07.58-3.08zM12.5 5.5c-1.64 0-3.26.98-4.23 2.55-1.6 2.6-.43 6.25 1 8.45.66 1.04 1.5 2.2 2.77 2.2 1.2 0 1.55-.77 3.15-.77 1.6 0 1.95.77 3.15.76 1.33 0 2.13-1.06 2.78-2.1.45-.78.64-1.52.66-1.56-.02-.01-2.35-.9-2.41-3.48-.05-2.3 1.86-3.33 1.96-3.4-.85-1.23-2.18-1.34-2.65-1.34-1.14 0-2.24.67-2.86.67-.64 0-1.9-.68-3.22-.68z" />
-                </svg>
-                <span className="text-sm font-semibold">Download on iOS</span>
+                <img src={appStoreBadge} alt="App Store" className="h-8 w-auto object-contain" />
+                <span className="text-left leading-tight">
+                  <span className="block text-[9px] font-medium uppercase tracking-[0.12em] text-white/70">
+                    Download on
+                  </span>
+                  <span className="block text-sm font-semibold">App Store</span>
+                </span>
               </a>
             </div>
           </div>
@@ -615,7 +1231,7 @@ export function ZumbaRegistration() {
             Zumba Fit by CleanIt
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-purple-400 font-bold mb-3 md:mb-4">
-            Pre-Registration Form
+            Registration Form
           </p>
           <p className="text-purple-200 text-base sm:text-lg max-w-lg mx-auto">
             Secure your slot and enjoy a fun-filled Zumba experience with CleanIt!
@@ -648,11 +1264,11 @@ export function ZumbaRegistration() {
               )}
 
               {/* Event Information - highlighted card above packages */}
-              <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-4 mb-4">
+              <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-5 sm:p-6 mb-4">
                 <h4 className="text-sm font-semibold text-purple-800">EVENT INFORMATION</h4>
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-purple-600">
                       {/* Calendar icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -666,16 +1282,16 @@ export function ZumbaRegistration() {
                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H5V9h14v9z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-600 font-semibold">Date & Time</p>
-                      <p className="text-sm text-gray-900">
-                        {/* August 12, 2026 <br /> 9 AM onwards */}
+                    <div className="min-w-0 pt-0.5">
+                      <p className="mb-1 text-xs font-semibold text-gray-600">Date & Time</p>
+                      <p className="text-sm leading-5 text-gray-900">
+                        October 11, 2026 <br /> 9:30 A.M Onwards
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-purple-600">
                       {/* Location / Pin icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -688,16 +1304,16 @@ export function ZumbaRegistration() {
                         <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-600 font-semibold">Location</p>
-                      <p className="text-sm text-gray-900">
-                        {/* Ground Floor, Trade Hall, Robinsons Novaliches{" "} */}
+                    <div className="min-w-0 pt-0.5">
+                      <p className="mb-1 text-xs font-semibold text-gray-600">Location</p>
+                      <p className="text-sm leading-5 text-gray-900">
+                        Ground Floor, Trade Hall, Robinsons Novaliches
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-purple-600">
                       {/* Phone icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -710,9 +1326,9 @@ export function ZumbaRegistration() {
                         <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.36 11.36 0 0 0 3.55.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.55 1 1 0 0 1-.24 1.01l-2.21 2.23z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-600 font-semibold">Contact</p>
-                      <p className="text-sm text-gray-900">
+                    <div className="min-w-0 pt-0.5">
+                      <p className="mb-1 text-xs font-semibold text-gray-600">Contact</p>
+                      <p className="text-sm leading-5 text-gray-900">
                         <a href="tel:09171802216" className="hover:underline">
                           0917 180 2216
                         </a>
@@ -720,8 +1336,8 @@ export function ZumbaRegistration() {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <div className="text-purple-600 bg-purple-100 rounded-md p-2 flex-shrink-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-purple-600">
                       {/* Mail icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -734,9 +1350,9 @@ export function ZumbaRegistration() {
                         <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-600 font-semibold">Email</p>
-                      <p className="text-sm text-gray-900">
+                    <div className="min-w-0 pt-0.5">
+                      <p className="mb-1 text-xs font-semibold text-gray-600">Email</p>
+                      <p className="break-all text-sm leading-5 text-gray-900">
                         <a href="mailto:info@cleanit.business" className="hover:underline">
                           info@cleanit.business
                         </a>
@@ -801,10 +1417,10 @@ export function ZumbaRegistration() {
                         <span className="text-purple-600 mr-2 font-bold">•</span>
                         <span>Headband</span>
                       </li>
-                      <li className="flex items-start">
+                      {/* <li className="flex items-start">
                         <span className="text-purple-600 mr-2 font-bold">•</span>
                         <span>Wristband</span>
-                      </li>
+                      </li> */}
                       <li className="flex items-start">
                         <span className="text-purple-600 mr-2 font-bold">•</span>
                         <span>1 Raffle Ticket</span>
@@ -869,10 +1485,10 @@ export function ZumbaRegistration() {
                         <span className="text-blue-600 mr-2 font-bold">•</span>
                         <span>Headband</span>
                       </li>
-                      <li className="flex items-start">
+                      {/* <li className="flex items-start">
                         <span className="text-blue-600 mr-2 font-bold">•</span>
                         <span>Wristband</span>
-                      </li>
+                      </li> */}
                       <li className="flex items-start">
                         <span className="text-blue-600 mr-2 font-bold">•</span>
                         <span className="font-bold">Dri-fit Shirt</span>
@@ -950,7 +1566,7 @@ export function ZumbaRegistration() {
                           [centeredContestCategory.title]: !prev[centeredContestCategory.title],
                         }))
                       }
-                      className="sm:col-span-2 lg:col-start-2 lg:col-span-1 relative h-full min-h-[62px] w-full text-left cursor-pointer [perspective:1000px]"
+                      className="relative h-[84px] w-full text-left cursor-pointer [perspective:1000px] sm:col-span-2 lg:col-span-1 lg:col-start-2"
                     >
                       <div
                         className={`relative h-full w-full rounded-lg transition-transform duration-600 [transform-style:preserve-3d] ${
@@ -959,8 +1575,8 @@ export function ZumbaRegistration() {
                             : ""
                         }`}
                       >
-                        <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm [backface-visibility:hidden]">
-                          <span className="mr-2 text-base flex-shrink-0" aria-hidden="true">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 px-3 py-2.5 text-center text-sm font-medium text-gray-800 shadow-sm [backface-visibility:hidden]">
+                          <span className="text-base flex-shrink-0" aria-hidden="true">
                             ⭐
                           </span>
                           <span className="line-clamp-2">{centeredContestCategory.title}</span>
@@ -976,12 +1592,19 @@ export function ZumbaRegistration() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 mt-4">
-                  <p className="text-xs sm:text-sm text-gray-700 mb-2">
-                    <span className="font-semibold text-gray-900">Raffle Prizes:</span>
-                  </p>
-                  <div className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-500 text-xs sm:text-sm">
-                    (Raffle prize information to be announced)
+                <div className="mt-6 overflow-hidden rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-300 via-orange-200 to-pink-200 p-[1px] shadow-lg shadow-orange-200/50 sm:p-[1.5px]">
+                  <div className="flex items-start gap-3 rounded-[15px] bg-gradient-to-r from-[#fffaf0] via-[#fff1d6] to-[#fdf2f8] p-4 sm:p-5">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-xl shadow-md shadow-pink-300/70">
+                      🎁
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.14em] text-orange-700">
+                        Raffle &amp; Prizes
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-gray-800 sm:text-base">
+                        Stay tuned for the mechanics &amp; prizes during the event.
+                      </p>
+                    </div>
                   </div>
                 </div>
                 {errors.registrationPackage && (
@@ -1052,19 +1675,29 @@ export function ZumbaRegistration() {
 
                 {/* Birthday */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label htmlFor="birthday" className="block text-sm font-semibold text-gray-900 mb-2">
                     Birthday <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="date"
+                    id="birthday"
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
+                    onClick={event => {
+                      const input = event.currentTarget;
+                      input.focus();
+                      input.showPicker?.();
+                    }}
                     min="1926-01-01"
-                    max="2025-12-31"
+                    max={(() => {
+                      const maxDate = new Date();
+                      maxDate.setFullYear(maxDate.getFullYear() - 16);
+                      return maxDate.toISOString().split("T")[0];
+                    })()}
                     aria-invalid={!!errors.birthday}
                     aria-describedby={errors.birthday ? "birthday-error" : undefined}
-                    className={`w-full px-4 py-2 rounded-lg border-2 transition-colors text-black ${
+                    className={`w-full cursor-pointer px-4 py-2 rounded-lg border-2 transition-colors text-black ${
                       errors.birthday
                         ? "border-[#B42318] bg-[#FEF3F2]"
                         : "border-gray-300 bg-gray-50 focus:border-purple-500 focus:bg-white"
@@ -1342,6 +1975,34 @@ export function ZumbaRegistration() {
                         aria-describedby={errors.gcashProof ? "gcashProof-error" : undefined}
                         className="hidden"
                       />
+                      {formData.gcashProof && formData.modeOfPayment === "gcash" && (
+                        <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                            Extracted GCash Reference Number
+                          </p>
+                          <p className="mt-1 break-all text-sm font-semibold text-emerald-900">
+                            {formData.paymentReference || "Not detected"}
+                          </p>
+                          <div className="mt-3 grid grid-cols-2 gap-3 border-t border-emerald-200 pt-3">
+                            <div>
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                                Payment date
+                              </p>
+                              <p className="mt-1 text-sm font-medium text-emerald-900">
+                                {formatPaymentProofDate(paymentProofDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                                Detected amount
+                              </p>
+                              <p className="mt-1 text-sm font-medium text-emerald-900">
+                                {formatPaymentProofAmount(paymentProofAmountCents)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       {errors.gcashProof && (
                         <p
                           id="gcashProof-error"
@@ -1384,10 +2045,7 @@ export function ZumbaRegistration() {
                       </div>
                     </div>
                     <div className="border-t border-blue-200 pt-4">
-                      <label
-                        className="block text-sm font-semibold text-gray
-                      -900 mb-3"
-                      >
+                      <label className="block text-sm font-semibold text-gray-900 mb-3">
                         Upload Proof of Payment <span className="text-red-600">*</span>
                       </label>
                       <p className="text-xs text-gray-600 mb-3">
@@ -1411,7 +2069,7 @@ export function ZumbaRegistration() {
                             <p className="text-sm font-medium text-gray-700">
                               Click to upload or drag and drop
                             </p>
-                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                            <p className="text-xs text-gray-500">PNG & JPG, up to 10MB</p>
                           </>
                         )}
                       </div>
@@ -1425,6 +2083,34 @@ export function ZumbaRegistration() {
                         aria-describedby={errors.bankProof ? "bankProof-error" : undefined}
                         className="hidden"
                       />
+                      {formData.bankProof && formData.modeOfPayment === "bank-transfer" && (
+                        <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                            Extracted Transaction Number
+                          </p>
+                          <p className="mt-1 break-all text-sm font-semibold text-emerald-900">
+                            {formData.paymentReference || "Not detected"}
+                          </p>
+                          <div className="mt-3 grid grid-cols-2 gap-3 border-t border-emerald-200 pt-3">
+                            <div>
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                                Payment date
+                              </p>
+                              <p className="mt-1 text-sm font-medium text-emerald-900">
+                                {formatPaymentProofDate(paymentProofDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                                Detected amount
+                              </p>
+                              <p className="mt-1 text-sm font-medium text-emerald-900">
+                                {formatPaymentProofAmount(paymentProofAmountCents)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       {errors.bankProof && (
                         <p id="bankProof-error" className="text-[#B42318] text-sm font-medium mt-2">
                           {errors.bankProof}
@@ -1437,28 +2123,30 @@ export function ZumbaRegistration() {
 
               {/* Registration Summary */}
               {formData.registrationPackage && (
-                <div className="border-t pt-6 md:pt-8 p-4 md:p-6 bg-linear-to-r from-purple-50 to-blue-50 rounded-lg">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Registration Summary</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm md:text-base">
-                      <span className="text-gray-700">Registration Package:</span>
-                      <span className="font-semibold text-gray-900">
-                        {formData.registrationPackage === "regular" ? "Regular" : "VIP"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between pb-3 border-b border-gray-200 text-sm md:text-base">
-                      <span className="text-gray-700">Registration Fee:</span>
-                      <span className="font-bold text-lg text-purple-600">₱{registrationFee}</span>
-                    </div>
-                    <div className="flex justify-between text-sm md:text-base">
-                      <span className="text-gray-700">Mode of Payment:</span>
-                      <span className="font-semibold text-gray-900">
-                        {formData.modeOfPayment === "gcash"
-                          ? "GCash"
-                          : formData.modeOfPayment === "bank-transfer"
-                            ? "Bank Transfer"
-                            : "Not selected"}
-                      </span>
+                <div className="pt-6 md:pt-8">
+                  <div className="rounded-xl border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 p-4 md:p-6 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Registration Summary</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm md:text-base">
+                        <span className="text-gray-700">Registration Package:</span>
+                        <span className="font-semibold text-gray-900">
+                          {formData.registrationPackage === "regular" ? "Regular" : "VIP"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between pb-3 border-b border-gray-200 text-sm md:text-base">
+                        <span className="text-gray-700">Registration Fee:</span>
+                        <span className="font-bold text-lg text-purple-600">₱{registrationFee}</span>
+                      </div>
+                      <div className="flex justify-between text-sm md:text-base">
+                        <span className="text-gray-700">Mode of Payment:</span>
+                        <span className="font-semibold text-gray-900">
+                          {formData.modeOfPayment === "gcash"
+                            ? "GCash"
+                            : formData.modeOfPayment === "bank-transfer"
+                              ? "Bank Transfer"
+                              : "Not selected"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1480,7 +2168,7 @@ export function ZumbaRegistration() {
                     Processing...
                   </>
                 ) : (
-                  "PRE-REGISTER NOW"
+                  "REGISTER NOW"
                 )}
               </button>
             </form>
