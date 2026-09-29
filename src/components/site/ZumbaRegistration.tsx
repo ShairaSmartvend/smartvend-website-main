@@ -836,7 +836,7 @@ if (formData.modeOfPayment && referenceMissing) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/zumba/getRegistrations",
+        "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/getRegistrations",
         {
           method: "GET",
           headers: { Accept: "application/json" },
@@ -946,7 +946,7 @@ if (formData.modeOfPayment && referenceMissing) {
       // );
 
       const response = await fetch(
-        "https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
+        "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/addRegistration",
         {
           method: "POST",
           headers: {
