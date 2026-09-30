@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import Tesseract from "tesseract.js";
 import { AlertCircle, CheckCircle2, Upload, Loader2, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import modgcashQR from "@/assets/modgcash.jpg";
@@ -836,6 +835,7 @@ if (formData.modeOfPayment && referenceMissing) {
 
     try {
       const response = await fetch(
+        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
         "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/getRegistrations",
         {
           method: "GET",
@@ -946,6 +946,7 @@ if (formData.modeOfPayment && referenceMissing) {
       // );
 
       const response = await fetch(
+        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
         "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/addRegistration",
         {
           method: "POST",
@@ -1283,7 +1284,7 @@ if (formData.modeOfPayment && referenceMissing) {
                       </svg>
                     </div>
                     <div className="min-w-0 pt-0.5">
-                      <p className="mb-1 text-xs font-semibold text-gray-600">Date & Time</p>
+                      <p className="mb-1 text-xs font-bold text-black">Date & Time</p>
                       <p className="text-sm leading-5 text-gray-900">
                         October 11, 2026 <br /> 9:30 A.M Onwards
                       </p>
@@ -1305,7 +1306,7 @@ if (formData.modeOfPayment && referenceMissing) {
                       </svg>
                     </div>
                     <div className="min-w-0 pt-0.5">
-                      <p className="mb-1 text-xs font-semibold text-gray-600">Location</p>
+                      <p className="mb-1 text-xs font-bold text-black">Location</p>
                       <p className="text-sm leading-5 text-gray-900">
                         Ground Floor, Trade Hall, Robinsons Novaliches
                       </p>
@@ -1327,7 +1328,7 @@ if (formData.modeOfPayment && referenceMissing) {
                       </svg>
                     </div>
                     <div className="min-w-0 pt-0.5">
-                      <p className="mb-1 text-xs font-semibold text-gray-600">Contact</p>
+                      <p className="mb-1 text-xs font-bold text-black">Contact</p>
                       <p className="text-sm leading-5 text-gray-900">
                         <a href="tel:09171802216" className="hover:underline">
                           0917 180 2216
@@ -1351,7 +1352,7 @@ if (formData.modeOfPayment && referenceMissing) {
                       </svg>
                     </div>
                     <div className="min-w-0 pt-0.5">
-                      <p className="mb-1 text-xs font-semibold text-gray-600">Email</p>
+                      <p className="mb-1 text-xs font-bold text-black">Email</p>
                       <p className="break-all text-sm leading-5 text-gray-900">
                         <a href="mailto:info@cleanit.business" className="hover:underline">
                           info@cleanit.business
