@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import Tesseract from "tesseract.js";
 import { AlertCircle, CheckCircle2, Upload, Loader2, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import Tesseract from "tesseract.js";
 import modgcashQR from "@/assets/modgcash.jpg";
 import playStoreBadge from "@/assets/Playstore.png";
 import appStoreBadge from "@/assets/appstore.png";
@@ -616,6 +617,10 @@ export function ZumbaRegistration() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setSubmitError(currentError =>
+      currentError === "This payment reference has already been used." ? "" : currentError,
+    );
+
     const method = paymentType === "gcash" ? "gcash" : "bank-transfer";
     const fieldName = paymentType === "gcash" ? "gcashProof" : "bankProof";
 
@@ -836,7 +841,7 @@ if (formData.modeOfPayment && referenceMissing) {
 
     try {
       const response = await fetch(
-        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
+        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration", //for local host
         "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/getRegistrations",
         {
           method: "GET",
@@ -947,7 +952,7 @@ if (formData.modeOfPayment && referenceMissing) {
       // );
 
       const response = await fetch(
-        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration",
+        //"https://oyster-app-uv94u.ondigitalocean.app/zumba/addRegistration", //for local host
         "https://cleanitapiwebservice-v52dc.ondigitalocean.app/zumba/addRegistration",
         {
           method: "POST",
@@ -1258,7 +1263,7 @@ if (formData.modeOfPayment && referenceMissing) {
           {/* Form Content */}
           <div className="p-6 sm:p-8 md:p-10">
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
-              {submitError && (
+              {submitError && submitError !== "This payment reference has already been used." && (
                 <Alert className="border-[#B42318] bg-[#FEF3F2] text-[#B42318]" role="alert">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{submitError}</AlertDescription>
@@ -2120,6 +2125,12 @@ if (formData.modeOfPayment && referenceMissing) {
                       )}
                     </div>
                   </div>
+                )}
+                {submitError === "This payment reference has already been used." && (
+                  <Alert className="border-[#B42318] bg-[#FEF3F2] text-[#B42318]" role="alert">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{submitError}</AlertDescription>
+                  </Alert>
                 )}
               </div>
 
