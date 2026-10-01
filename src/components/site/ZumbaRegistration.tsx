@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import Tesseract from "tesseract.js";
 import { AlertCircle, CheckCircle2, Upload, Loader2, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import modgcashQR from "@/assets/modgcash.jpg";
